@@ -1,0 +1,64 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2020 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+
+<odoo>
+
+    <record id="view_picking_with_carrier" model="ir.ui.view">
+        <field name="name">stock.picking.form.view</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='cancel_shipment']" position="attributes">
+                <attribute name="attrs">{'invisible':['|','|','|',('carrier_tracking_ref','=',False),('delivery_type','in', ['fixed', 'base_on_rule','freightview']),('delivery_type','=',False),('state','not in',('done'))]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_validate']" position="before">
+            	<field name="is_quote_created_in_freightview" invisible="1"/>
+            	<field name="freightview_shipment_id" invisible="1"/>
+            	<field name="is_imported_shipment_info_from_freightview" invisible="1"/>
+            	<field name="carrier_tracking_ref" invisible="1"/>
+                <button name="create_quote_in_freightview" attrs="{'invisible': ['|', '|', '|',('state', '!=', 'assigned'), ('delivery_type', '!=', 'freightview'), ('is_quote_created_in_freightview', '=', True), ('picking_type_code', '!=', 'outgoing')]}" string="Create Quote In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>  
+                <button name="view_quote_in_freightview" attrs="{'invisible': ['|', '|', '|','|',('state', '!=', 'assigned'), ('delivery_type', '!=', 'freightview'), ('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('picking_type_code', '!=', 'outgoing')]}" string="View Quote In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>  
+                <button name="view_shipment_in_freightview" attrs="{'invisible': ['|', '|', '|','|',('state', 'not in', ('assigned', 'done')), ('delivery_type', '!=', 'freightview'), ('is_quote_created_in_freightview', '=', False),('picking_type_code', '!=', 'outgoing'),('carrier_tracking_ref','=', False)]}" string="View Shipment In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>     
+                <button name="get_shipment_info_from_freightview" attrs="{'invisible': ['|','|', '|',('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}" string="Get Shipment Info From Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>     
+            </xpath>
+            <xpath expr="//page[last()]" position="after">
+				<page string="Freightview" name="freightview" attrs="{'invisible': ['|',('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}">
+					<group colspan="4">
+						<group string="Residential">
+							<field name="is_residential_address"/>
+							<field name="is_liftgate_required_for_delivery" attrs="{'invisible': [('is_residential_address', '!=', True)]}" />
+							<field name="is_inside_delivery_required"  attrs="{'invisible': [('is_residential_address', '!=', True)]}"/>
+						</group>
+						<group string="Charges">
+							<field name="is_call_or_notify_before_delivery" attrs="{'readonly': [('is_delivery_appointment_required', '=', True)]}"/>
+							<field name="is_delivery_appointment_required" attrs="{'readonly': [('is_call_or_notify_before_delivery', '=', True)]}"/>
+							<field name="is_sort_and_segregate"/>
+							<field name="is_protect_from_freezing"/>
+						</group>
+						<group string="Hazmat" attrs="{'invisible': ['|',('is_hazmat', '!=', True), ('has_packages', '=', True)]}">
+							<field name="is_hazmat" />
+							<field name="hazmat_id" />
+							<field name="hazard_class" />
+						</group>
+						<group string="Stackable" attrs="{'invisible': [('has_packages', '=', True)]}">
+							<field name="is_stackable" />
+						</group>
+						<group string="NMFC" attrs="{'invisible': [('has_packages', '=', True)]}">
+							<field name="nmfc_item" />
+						</group>
+					</group>
+				</page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

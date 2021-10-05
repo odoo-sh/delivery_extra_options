@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+
+<record model="ir.ui.view"	id="product_packaging_delivery_form_inherit">
+	<field name="name">product.packaging.form.delivery.inherit</field>
+	<field name="model">product.packaging</field>
+	<field name="inherit_id" ref="delivery.product_packaging_delivery_form"/>
+	<field name="arch" type="xml">
+			<field name="height" position="after">
+				<span><field name="package_dimension_uom_name"/></span>
+			</field>
+			<field name="width" position="after">
+				<span><field name="package_dimension_uom_name"/></span>
+			</field>
+			<field name="packaging_length" position="after">
+				<span><field name="package_dimension_uom_name"/></span>
+			</field>
+	</field>
+</record>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1  (See LICENSE file for full copyright and licensing details). -->
+
+<odoo>
+    <record id="view_picking_withcarrier_out_base_extra_options_form" model="ir.ui.view">
+        <field name="name">stock.picking.withcarrier.out.base.extra.options.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+        <field name="arch" type="xml">
+            <field name="carrier_id" position="after">
+                <field name="ltl_class" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+                <field name="carrier_price"/>
+            </field>
+            <xpath expr="//group[@name='carrier_data']" position="inside">
+                <field name="is_residential_address" attrs="{'invisible': ['|',('picking_type_code', '!=', 'outgoing'),('delivery_type', 'in', ['fixed','base_on_rule'])]}"/>
+            </xpath>
+       </field>
+    </record>
+
+    <record id="view_picking_base_extra_options_form" model="ir.ui.view">
+         <field name="name">stock.picking.form</field>
+         <field name="model">stock.picking</field>
+         <field name="inherit_id" ref="stock.view_picking_form"/>
+         <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='detailed_operations_shown']/button[@name='action_put_in_pack']" position="after">
+                <field name="is_all_product_in_package" invisible="1"/>
+                <button class="oe_highlight" style="margin-left:20px" name="action_add_a_package" type="object" string="Add a package" attrs="{'invisible': ['|',('is_all_product_in_package','=',False),('picking_type_code','!=','outgoing')]}" groups="stock.group_tracking_lot"/>
+            </xpath>
+        </field>
+     </record>
+     
+</odoo>

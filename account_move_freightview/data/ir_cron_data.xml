@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+<data noupdate="1">  
+
+    <record id="import_estimation_info_from_freightview" model="ir.cron">
+       <field name="name">Import Estimation Info From Freightview</field>
+       <field name="interval_number">1</field>
+       <field name="interval_type">days</field>
+       <field name="numbercall">-1</field>
+       <field name="doall" eval="False"/>
+       <field eval="False" name="active" />
+       <field name="model_id" ref="model_account_move"/>
+       <field name="state">code</field>
+       <field name="code">
+records = model.search([('move_type','=','in_invoice'),('state','=','draft'),('checked_in_freightview','=',False)])
+if records:
+   records.cron_import_estimation_info_from_freightview()
+       </field>
+    </record>
+    
+</data>
+</odoo>

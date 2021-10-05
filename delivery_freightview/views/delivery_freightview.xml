@@ -1,0 +1,24 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2020 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+
+<odoo>
+
+<record id="view_delivery_carrier_form_with_provider_freightview" model="ir.ui.view">
+        <field name="name">delivery.carrier.form.provider.freightview</field>
+        <field name="model">delivery.carrier</field>
+        <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='destination']" position='before'>
+                <page string="Freightview Configuration" name="freightview_configuration" groups="delivery_freightview.group_freightview_manager" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}">
+                    <group>
+                        <group>
+                            <field name="freightview_api_key" attrs="{'required': [('delivery_type', '=', 'freightview')]}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+
+<odoo>
+
+<record id="view_move_form_inherit" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_register_payment']" position="before">
+                <button name="get_estimation_info_from_freightview" type="object" string="Check Freightview"   attrs="{'invisible': ['|','|','|',('move_type', '!=', 'in_invoice'),('state', '!=', 'draft'),('ref', '=', False),('checked_in_freightview','=',True)]}"/>
+            </xpath>
+            <xpath expr="//group[@id='header_right_group']" position="inside">
+                <field name="picking_id" readonly="True"/>
+                <field name="no_record_in_freightview" attrs="{'invisible': ['|',('move_type', '!=', 'in_invoice'),('ref', '=', False)]}" readonly="True"/>
+                <field name="checked_in_freightview" attrs="{'invisible': ['|',('move_type', '!=', 'in_invoice'),('ref', '=', False)],'readonly':[('no_record_in_freightview','=',False)]}"/>
+                <field name="freightview_estimated_cost" attrs="{'invisible': ['|',('move_type', '!=', 'in_invoice'),('ref', '=', False)]}" readonly="True"/>
+                <field name="freightview_shipment_link" widget="url" attrs="{'invisible': ['|',('move_type', '!=', 'in_invoice'),('ref', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

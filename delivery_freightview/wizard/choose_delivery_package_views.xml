@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+    <record id="choose_delivery_package_form_inherit" model="ir.ui.view">
+        <field name="name">choose.delivery.package.form</field>
+        <field name="model">choose.delivery.package</field>
+        <field name="inherit_id" ref="delivery.choose_delivery_package_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//footer" position="before">
+                <group>
+                	<field name="delivery_type" invisible='1'/>
+                	<field name="is_hazmat" invisible='1'/>
+                	<field name="hazmat_id" attrs="{'invisible': ['|',('is_hazmat', '!=', True), ('delivery_type', '!=', 'freightview')]}" />
+                	<field name="hazard_class" attrs="{'invisible': ['|',('is_hazmat', '!=', True), ('delivery_type', '!=', 'freightview')]}"/>
+                    <field name="is_stackable" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}"/>
+            		<field name="nmfc_item" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}"/>
+                 </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

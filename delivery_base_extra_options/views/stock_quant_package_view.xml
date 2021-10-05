@@ -1,0 +1,36 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1  (See LICENSE file for full copyright and licensing details). -->
+
+<odoo>
+
+    <record id="view_quant_package_weight_base_extra_option_form" model="ir.ui.view">
+            <field name="name">stock.quant.package.weight.base.extra.option.form</field>
+            <field name="model">stock.quant.package</field>
+            <field name="inherit_id" ref="delivery.view_quant_package_weight_form"/>
+            <field name="arch" type="xml">
+                <field name="packaging_id" position="after">
+                    <field name="ltl_class"/>
+                    <field name="is_hazmat"/>
+                </field>
+                <div name="Shipping Weight" position="after">
+                    <field name="is_custom_dimensions" invisible="1"/>
+                    <label for="height" attrs="{'invisible':[('is_custom_dimensions','=',False)]}" />
+                    <div class="o_row" name="height" attrs="{'invisible':[('is_custom_dimensions','=',False)]}" >
+                        <field name="height"/>
+                        <span><field name="package_dimension_uom_name"/></span>
+                    </div>
+                    <label for="width" attrs="{'invisible':[('is_custom_dimensions','=',False)]}" />
+                    <div class="o_row" name="width" attrs="{'invisible':[('is_custom_dimensions','=',False)]}">
+                        <field name="width"/>
+                        <span><field name="package_dimension_uom_name"/></span>
+                    </div>
+                    <label for="packaging_length" attrs="{'invisible':[('is_custom_dimensions','=',False)]}" />
+                    <div class="o_row" name="packaging_length" attrs="{'invisible':[('is_custom_dimensions','=',False)]}">
+                        <field name="packaging_length"/>
+                        <span><field name="package_dimension_uom_name"/></span>
+                    </div>
+                </div>
+            </field>
+        </record>
+</odoo>

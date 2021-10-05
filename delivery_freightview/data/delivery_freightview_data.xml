@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2020 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+<data noupdate="1">  
+
+	<record id="product_product_delivery_freightview" model="product.product">
+      <field name="name">Freightview</field>
+      <field name="default_code">Delivery_014</field>
+      <field name="type">service</field>
+      <field name="categ_id" ref="delivery.product_category_deliveries"/>
+      <field name="sale_ok" eval="False"/>
+      <field name="purchase_ok" eval="False"/>
+      <field name="list_price">0.0</field>
+      <field name="invoice_policy">order</field>
+    </record>
+    
+     <!-- Freightview Delivery Carriers -->
+     <record id="delivery_carrier_freightview" model="delivery.carrier">
+        <field name="name">Freightview</field>
+        <field name="delivery_type">freightview</field>
+        <field name="product_id" ref="delivery_freightview.product_product_delivery_freightview"/>
+    </record>
+    
+    <record id="import_shipment_info_from_freightview" model="ir.cron">
+       <field name="name">Import Shipment Info From Freightview</field>
+       <field name="interval_number">1</field>
+       <field name="interval_type">days</field>
+       <field name="numbercall">-1</field>
+       <field name="doall" eval="False"/>
+       <field eval="False" name="active" />
+       <field name="model_id" ref="model_stock_picking"/>
+       <field name="code">model.cron_import_shipment_info_from_freightview()</field>
+       <field name="state">code</field>
+    </record>
+    
+    <record id="import_package_info_from_freightview" model="ir.cron">
+       <field name="name">Import Package Info From Freightview</field>
+       <field name="interval_number">1</field>
+       <field name="interval_type">days</field>
+       <field name="numbercall">-1</field>
+       <field name="doall" eval="False"/>
+       <field eval="False" name="active" />
+       <field name="model_id" ref="model_stock_picking"/>
+       <field name="code">model.cron_import_package_info_from_freightview()</field>
+       <field name="state">code</field>
+    </record>
+    
+</data>
+</odoo>

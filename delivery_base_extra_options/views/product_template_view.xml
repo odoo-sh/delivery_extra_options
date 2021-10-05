@@ -1,0 +1,17 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1  (See LICENSE file for full copyright and licensing details). -->
+
+<odoo>
+    <record model="ir.ui.view" id="product_template_base_extra_options_form_view">
+            <field name="name">product.template.base.extra.options.form.view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='volume']" position="after">
+                    <field name="is_hazmat" />
+                    <field name="ltl_class" />
+                </xpath>
+            </field>
+    </record>
+</odoo>

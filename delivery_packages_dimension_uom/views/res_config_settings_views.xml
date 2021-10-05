@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+    	<record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.product</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='manage_volume_uom_setting']" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box" id="manage_dimension_uom_setting">
+                            <div class="o_setting_right_pane">
+                                <label for="package_dimension_uom_id" string="Package Dimension UoM "/>
+                                <div class="text-muted">
+                                    Define your package dimension unit of measure
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="package_dimension_uom_id" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+</odoo>
