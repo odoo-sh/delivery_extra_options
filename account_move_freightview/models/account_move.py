@@ -29,7 +29,12 @@ class AccountMove(models.Model):
 
     def cron_import_estimation_info_from_freightview(self):
         for move in self:
-            move.get_estimation_info_from_freightview()
+            edi_module = self.env['ir.module.module'].search([('name', '=', 'edi'),('state','=','installed')])
+            if edi_module:
+                if move.edi_data_id:
+                    move.get_estimation_info_from_freightview()
+            else:
+                move.get_estimation_info_from_freightview()
 
     def get_estimation_info_from_freightview(self):
         carrier = self.env.ref('delivery_freightview.delivery_carrier_freightview')

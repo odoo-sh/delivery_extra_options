@@ -79,10 +79,10 @@ class ChooseDeliveryPackage(models.TransientModel):
             packaging.length_uom_name = self.env['product.template']._get_length_uom_name_from_ir_config_parameter()
 
     def action_put_in_pack(self):
+        self = self.with_context(is_hazmat=self.is_hazmat,ltl_class=self.ltl_class,height=self.height, width=self.width, length=self.packaging_length)
         if self._context.get('action_add_a_package'):
             self.action_add_a_package()
         else:
-            self = self.with_context(is_hazmat=self.is_hazmat,ltl_class=self.ltl_class,height=self.height, width=self.width, length=self.packaging_length)
             super(ChooseDeliveryPackage,self).action_put_in_pack()
 
     def get_package_value(self):
