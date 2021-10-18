@@ -7,11 +7,11 @@ import json
 
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
-from requests.auth import HTTPBasicAuth 
+from requests.auth import HTTPBasicAuth
 from odoo import fields,_
 from odoo.exceptions import UserError
 import re
-
+from odoo.http import request
 
 # This re should match postcodes like 12345 and 12345-6789
 ZIP_ZIP4 = re.compile('^[0-9]{5}(-[0-9]{4})?$')
@@ -34,6 +34,11 @@ class FreightViewRequest():
                 self.url = 'https://www.freightview.com/api/v1.0/shipments/'
             else:
                 self.url = 'https://www.freightview.dev/api/v1.0/shipments/'
+        elif request_type == "booking":
+            if prod_environment:
+                self.url = f"https://www.freightview.com/api/v1.0/book"
+            else:
+                self.url = f"https://www.freightview.dev/api/v1.0/book"
         else:
             if prod_environment:
                 self.url = 'https://www.freightview.com/api/v1.0/rates'
@@ -82,7 +87,9 @@ class FreightViewRequest():
         if product_name:
             return _("The product weight is missing or wrong!!! \n For the products(s) :  %s", ", ".join(product_name))     
         if not carrier.sudo().freightview_api_key:
-            return _("Freightview Api Key is missing!!!")     
+            return _("Freightview Account Api Key is missing!!!")
+        if not carrier.sudo().freightview_user_api_key:
+            return _("Freightview User Api Key is missing!!!")
         return False
     
     def freightview_rate_request(self, carrier, picking, warehouse):
@@ -107,6 +114,27 @@ class FreightViewRequest():
             dict_response['error'] = F"{general_error_message} - {error_message}"
             return dict_response 
     
+    def freightview_book_shipment_request(self, carrier, selected_line, picking):
+        rate_id = selected_line.rate_id
+        params = {  "id": picking.freightview_shipment_id,
+                    "rateId": rate_id,
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+        dict_response = {}
+        try:
+            self.debug_logger(params, 'freightview_book_shipment_request')
+            req = requests.post(self.url, data=json.dumps(params),headers=headers, auth = HTTPBasicAuth(carrier.sudo().freightview_user_api_key, ''))
+            req.raise_for_status()
+            dict_response = json.loads(req.content.decode('utf-8'))
+            response_text = req.content
+            self.debug_logger(response_text, 'freightview_book_shipment_response')
+            return dict_response
+        except IOError as e:
+            print(e)
+            return dict_response
+
     def set_line_items(self,package):
         length = width = height = 0
         if package.packaging_id:

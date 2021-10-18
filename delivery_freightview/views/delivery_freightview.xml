@@ -14,6 +14,7 @@
                     <group>
                         <group>
                             <field name="freightview_api_key" attrs="{'required': [('delivery_type', '=', 'freightview')]}"/>
+                            <field name="freightview_user_api_key" attrs="{'required': [('delivery_type', '=', 'freightview')]}"/>
                         </group>
                     </group>
                 </page>

@@ -8,3 +8,4 @@ from . import stock_picking
 from . import product_packaging
 from . import stock_move_line
 from . import stock_quant
+from . import freightview_shipment_rate

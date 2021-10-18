@@ -3,6 +3,10 @@
 # License OPL-1 (See LICENSE file for full copyright and licensing details)
 from odoo import models,fields,api,_
 from odoo.exceptions import UserError
+import json
+import requests
+from requests.auth import HTTPBasicAuth
+from odoo.exceptions import ValidationError
 
 class Picking(models.Model):
     _inherit = 'stock.picking'
@@ -51,7 +55,27 @@ class Picking(models.Model):
     is_stackable = fields.Boolean('Stackable')
     nmfc_item = fields.Char('NMFC item #')
     is_residential_address = fields.Boolean("Residential Address")
+    freightview_shipment_rate_ids = fields.One2many('freightview.shipment.rate','picking_id')
+    is_freightview_shipment_rate_selected = fields.Boolean(compute='_compute_is_rate_selected')
+    is_freightview_shipment_rates_active = fields.Boolean(compute='_compute_is_freightview_shipment_rates_active')
     
+    def _compute_is_rate_selected(self):
+        is_selected = any([x.is_selected for x in self.freightview_shipment_rate_ids])
+        self.is_freightview_shipment_rate_selected = is_selected
+
+    def _compute_is_freightview_shipment_rates_active(self):
+        is_active = any([x.active for x in self.freightview_shipment_rate_ids])
+        self.is_freightview_shipment_rates_active = is_active
+
+    @api.onchange('freightview_shipment_rate_ids')
+    def _onchange_is_selected(self):
+        booked_count = 0
+        for rec in self.freightview_shipment_rate_ids:
+            if rec.is_selected:
+                booked_count += 1
+        if booked_count > 1:
+            return {"warning": {"title": _("Warning"), "message": "Please select only one shipment service"}}
+
     def send_to_shipper(self):
         self.ensure_one()
         if self.carrier_id and self.carrier_id.delivery_type != 'freightview':
@@ -120,6 +144,38 @@ class Picking(models.Model):
                 freightview_shipment_id = result.get('data').get('id')
                 self.freightview_shipment_id = freightview_shipment_id
                 self.is_quote_created_in_freightview = True
+                rates = result.get('data').get('rates')
+                for rate in rates:
+                    if rate.get('status') == 'ok':
+                        charges = rate.get('charges')
+                        residential_delivery = 0
+                        hazardous = 0
+                        fuel = 0
+                        linehaul = 0
+                        for charge in charges:
+                            if charge['name']=='residential delivery':
+                                residential_delivery=charge['amount']
+                            if charge['name']=='hazardous':
+                                hazardous=charge['amount']
+                            if charge['name']=='fuel':
+                                fuel=charge['amount']
+                            if charge['name']=='linehaul':
+                                linehaul=charge['amount']
+                        self.env['freightview.shipment.rate'].create({
+                                        'active': False,
+                                        'rate_id':rate.get('id'),
+                                        'carrier':rate.get('carrier'),
+                                        'service_type': rate.get('serviceType'),
+                                        'estimated_days': rate.get('days'),
+                                        'pickup_date': result.get('data').get('pickupDate'),
+                                        'total':rate.get('total'),
+                                        'book_url':rate.get('bookUrl'),
+                                        'linehaul_charge': linehaul,
+                                        'fuel_charge': fuel,
+                                        'residential_delivery_charge': residential_delivery,
+                                        'hazardous_charge': hazardous,
+                                        'picking_id': self.id
+                                        })
                 return {
                 'type': 'ir.actions.act_url',
                 'url':  result.get('data').get('links').get('ratesUrl') ,
@@ -145,6 +201,37 @@ class Picking(models.Model):
                 else:
                     raise UserError(_(result.get('error_message',False)))
         return True
+
+    def get_rates_in_freightview(self):
+        freightview_shipment_rates = self.env['freightview.shipment.rate'].search([('active','=',False),('picking_id','=',self.id)])
+        if freightview_shipment_rates:
+            freightview_shipment_rates.write({'active':True})
+        return True
+
+    def review_quote_in_freightview(self):
+        selected_lines = self.freightview_shipment_rate_ids.filtered(lambda x: x.is_selected)
+        if len(selected_lines) != 1:
+            raise UserError(_("Please select only one shipment service"))
+        rate_url = selected_lines[0].book_url
+        return {
+                'type': 'ir.actions.act_url',
+                'url':  rate_url ,
+                'target': 'new'
+                }
+        return True
+
+    def book_in_freightview(self):
+        selected_lines = self.freightview_shipment_rate_ids.filtered(lambda x: x.is_selected)
+        if len(selected_lines) != 1:
+            raise UserError(_("Please select only one shipment service"))
+        result = self.carrier_id.freightview_book_shipment(selected_lines, self)
+        if result.get('success',False):
+            dict_response = result.get('data')
+            if dict_response:
+                selected_lines.write({'status':'booked'})
+                self.update_delivery_order(dict_response)
+        else:
+            raise UserError(_(result.get('error_message',False)))
            
     def update_delivery_order(self,shipment,cron=False):
         picking = self

@@ -16,6 +16,7 @@
         ],
     'data': [
         'security/security.xml',
+        'security/ir.model.access.csv',
         'data/delivery_freightview_data.xml',
         'views/delivery_freightview.xml',
         'views/stock_picking_views.xml',

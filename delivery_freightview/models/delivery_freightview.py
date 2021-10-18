@@ -9,7 +9,8 @@ class ProviderFreightView(models.Model):
     _inherit = 'delivery.carrier'
     
     delivery_type = fields.Selection(selection_add=[('freightview', "Freightview")],ondelete={'freightview': lambda recs: recs.write({'delivery_type': 'fixed', 'fixed_price': 0})})
-    freightview_api_key = fields.Char(string='Freightview Api Key')
+    freightview_api_key = fields.Char(string='Freightview Account Api Key')
+    freightview_user_api_key = fields.Char(string='Freightview User Api Key')
 
     def freightview_rate_shipment(self, picking):
         srm = FreightViewRequest(prod_environment=self.prod_environment, request_type = "rating", debug_logger=self.log_xml)
@@ -68,5 +69,26 @@ class ProviderFreightView(models.Model):
                 'error_message': False,
                 'warning_message': False
                 }
-        
+
+    def freightview_book_shipment(self, selected_line, picking):
+        srm = FreightViewRequest(prod_environment=self.prod_environment, request_type = "booking", debug_logger=self.log_xml)
+        warehouse = picking.picking_type_id.warehouse_id
+        check_result = srm.check_required_value(self, warehouse, picking)
+        if check_result:
+            return {'success': False,
+                    'price': 0.0,
+                    'error_message': check_result,
+                    'warning_message': False}
+        book_shipment_response = srm.freightview_book_shipment_request(self, selected_line, picking)
+        if book_shipment_response.get('error',False):
+            return {
+                    'success': False,
+                    'data' : {} or False,
+                    'error_message': _('Error:\n%s', book_shipment_response.get('error',False)),
+                    }
+        return {
+                'success': True,
+                'data' : book_shipment_response,
+                'error_message': False,
+                }
     

@@ -31,7 +31,7 @@
                 <button name="get_shipment_info_from_freightview" attrs="{'invisible': ['|','|', '|',('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}" string="Get Shipment Info From Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>     
             </xpath>
             <xpath expr="//page[last()]" position="after">
-				<page string="Freightview" name="freightview" attrs="{'invisible': ['|',('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}">
+				<page string="Freightview Options" name="freightview" attrs="{'invisible': ['|',('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}">
 					<group colspan="4">
 						<group string="Residential">
 							<field name="is_residential_address"/>
@@ -57,6 +57,31 @@
 						</group>
 					</group>
 				</page>
+				<page string="Freightview Rate" name="freightview_rate" attrs="{'invisible': ['|', '|',('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing'), ('freightview_shipment_id','=', False)]}">
+					<field name="is_freightview_shipment_rate_selected" invisible="1"/>
+					<field name= "is_freightview_shipment_rates_active" invisible="1" />
+					<button name="get_rates_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rates_active', '!=', False),('carrier_tracking_ref', '!=', False)]}" string="Get Rates" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
+					<button name="review_quote_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rate_selected', '=', False), ('is_imported_shipment_info_from_freightview', '=', True)]}" string="Review Quote in Freightview" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
+					<button name="book_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rate_selected', '=', False), ('is_imported_shipment_info_from_freightview', '=', True)]}" string="Book In Freightview" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
+					<field name="freightview_shipment_rate_ids" nolabel="1" editable="bottom" attrs="{'readonly': [('is_imported_shipment_info_from_freightview', '=', True)]}">
+						<tree editable="bottom">
+							<field name="sequence" widget="handle"/>
+							<field name="rate_id" invisible="1"/>
+							<field name="carrier" readonly="1"/>
+							<field name="service_type" readonly="1"/>
+							<field name="pickup_date" readonly="1"/>
+							<field name="estimated_days" readonly="1"/>
+							<field name="linehaul_charge" readonly="1"/>
+							<field name="fuel_charge" readonly="1"/>
+							<field name="residential_delivery_charge" readonly="1"/>
+							<field name="hazardous_charge" readonly="1"/>
+							<field name="total" readonly="1"/>
+							<field name='status' readonly="1"/>
+							<field name="is_selected" />
+							<field name="book_url" invisible="1"/>
+						</tree>
+					</field>
+		        </page>
             </xpath>
         </field>
     </record>
