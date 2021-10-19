@@ -132,7 +132,9 @@ class FreightViewRequest():
             self.debug_logger(response_text, 'freightview_book_shipment_response')
             return dict_response
         except IOError as e:
-            print(e)
+            if req.content:
+                error_message = json.loads(req.content.decode('utf-8')).get('error')
+                dict_response['error'] = error_message
             return dict_response
 
     def set_line_items(self,package):
@@ -159,7 +161,7 @@ class FreightViewRequest():
                     'stackable': package.is_stackable,
                     'hazardous': package.is_hazmat,
                     'hazard': {
-                                'hazmatId': package.hazmat_id,
+                                'hazmatId': package.hazmat_id or '',
                                 'hazardClass': package.hazard_class
                             }
                 }

@@ -57,13 +57,12 @@
 						</group>
 					</group>
 				</page>
-				<page string="Freightview Rate" name="freightview_rate" attrs="{'invisible': ['|', '|',('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing'), ('freightview_shipment_id','=', False)]}">
+				<page string="Freightview Rate" name="freightview_rate" attrs="{'invisible': ['|', ('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}">
 					<field name="is_freightview_shipment_rate_selected" invisible="1"/>
-					<field name= "is_freightview_shipment_rates_active" invisible="1" />
-					<button name="get_rates_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rates_active', '!=', False),('carrier_tracking_ref', '!=', False)]}" string="Get Rates" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
+					<button name="get_rates_in_freightview" attrs="{'invisible': ['|',('freightview_shipment_rate_ids','!=',[]),('carrier_tracking_ref', '!=', False)]}" string="Get Rates" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
 					<button name="review_quote_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rate_selected', '=', False), ('is_imported_shipment_info_from_freightview', '=', True)]}" string="Review Quote in Freightview" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
 					<button name="book_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rate_selected', '=', False), ('is_imported_shipment_info_from_freightview', '=', True)]}" string="Book In Freightview" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
-					<field name="freightview_shipment_rate_ids" nolabel="1" editable="bottom" attrs="{'readonly': [('is_imported_shipment_info_from_freightview', '=', True)]}">
+					<field name="freightview_shipment_rate_ids" nolabel="1" editable="bottom" attrs="{'readonly': [('is_imported_shipment_info_from_freightview', '=', True)]}" default_order="total asc">
 						<tree editable="bottom">
 							<field name="sequence" widget="handle"/>
 							<field name="rate_id" invisible="1"/>

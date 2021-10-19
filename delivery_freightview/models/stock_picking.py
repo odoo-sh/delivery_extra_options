@@ -57,15 +57,10 @@ class Picking(models.Model):
     is_residential_address = fields.Boolean("Residential Address")
     freightview_shipment_rate_ids = fields.One2many('freightview.shipment.rate','picking_id')
     is_freightview_shipment_rate_selected = fields.Boolean(compute='_compute_is_rate_selected')
-    is_freightview_shipment_rates_active = fields.Boolean(compute='_compute_is_freightview_shipment_rates_active')
-    
+
     def _compute_is_rate_selected(self):
         is_selected = any([x.is_selected for x in self.freightview_shipment_rate_ids])
         self.is_freightview_shipment_rate_selected = is_selected
-
-    def _compute_is_freightview_shipment_rates_active(self):
-        is_active = any([x.active for x in self.freightview_shipment_rate_ids])
-        self.is_freightview_shipment_rates_active = is_active
 
     @api.onchange('freightview_shipment_rate_ids')
     def _onchange_is_selected(self):
@@ -136,51 +131,55 @@ class Picking(models.Model):
                 } 
         return True
     
-    def create_quote_in_freightview(self):
+    def create_quote_in_freightview(self,create_quote_button=True):
         carrier = self.carrier_id
         if carrier and carrier.delivery_type == 'freightview' and self.picking_type_code == 'outgoing':
             result = carrier.freightview_rate_shipment(self)
             if result.get('success',False):
+                freightview_shipment_rate_obj = self.env['freightview.shipment.rate']
                 freightview_shipment_id = result.get('data').get('id')
                 self.freightview_shipment_id = freightview_shipment_id
                 self.is_quote_created_in_freightview = True
-                rates = result.get('data').get('rates')
-                for rate in rates:
-                    if rate.get('status') == 'ok':
-                        charges = rate.get('charges')
-                        residential_delivery = 0
-                        hazardous = 0
-                        fuel = 0
-                        linehaul = 0
-                        for charge in charges:
-                            if charge['name']=='residential delivery':
-                                residential_delivery=charge['amount']
-                            if charge['name']=='hazardous':
-                                hazardous=charge['amount']
-                            if charge['name']=='fuel':
-                                fuel=charge['amount']
-                            if charge['name']=='linehaul':
-                                linehaul=charge['amount']
-                        self.env['freightview.shipment.rate'].create({
-                                        'active': False,
-                                        'rate_id':rate.get('id'),
-                                        'carrier':rate.get('carrier'),
-                                        'service_type': rate.get('serviceType'),
-                                        'estimated_days': rate.get('days'),
-                                        'pickup_date': result.get('data').get('pickupDate'),
-                                        'total':rate.get('total'),
-                                        'book_url':rate.get('bookUrl'),
-                                        'linehaul_charge': linehaul,
-                                        'fuel_charge': fuel,
-                                        'residential_delivery_charge': residential_delivery,
-                                        'hazardous_charge': hazardous,
-                                        'picking_id': self.id
-                                        })
-                return {
-                'type': 'ir.actions.act_url',
-                'url':  result.get('data').get('links').get('ratesUrl') ,
-                'target': 'new'
-                }
+                if create_quote_button:
+                    return {
+                    'type': 'ir.actions.act_url',
+                    'url':  result.get('data').get('links').get('ratesUrl') ,
+                    'target': 'new'
+                    }
+                else:
+                    rates = result.get('data').get('rates')
+                    for rate in rates:
+                        if rate.get('status') == 'ok':
+                            charges = rate.get('charges')
+                            residential_delivery = 0
+                            hazardous = 0
+                            fuel = 0
+                            linehaul = 0
+                            for charge in charges:
+                                if charge['name']=='residential delivery':
+                                    residential_delivery=charge['amount']
+                                if charge['name']=='hazardous':
+                                    hazardous=charge['amount']
+                                if charge['name']=='fuel':
+                                    fuel=charge['amount']
+                                if charge['name']=='linehaul':
+                                    linehaul=charge['amount']
+                            freightview_shipment_rate_obj.create({
+                                            'rate_id':rate.get('id'),
+                                            'carrier':rate.get('carrier'),
+                                            'service_type': rate.get('serviceType'),
+                                            'estimated_days': rate.get('days'),
+                                            'pickup_date': result.get('data').get('pickupDate'),
+                                            'total':rate.get('total'),
+                                            'book_url':rate.get('bookUrl'),
+                                            'linehaul_charge': linehaul,
+                                            'fuel_charge': fuel,
+                                            'residential_delivery_charge': residential_delivery,
+                                            'hazardous_charge': hazardous,
+                                            'picking_id': self.id
+                                            })
+                    freightview_shipment_rate = freightview_shipment_rate_obj.search([('picking_id','=',self.id)],order='total asc', limit=1)
+                    freightview_shipment_rate.write({'is_selected':True})
             else:
                 raise UserError(_(result.get('error_message',False)))
         return True
@@ -203,9 +202,8 @@ class Picking(models.Model):
         return True
 
     def get_rates_in_freightview(self):
-        freightview_shipment_rates = self.env['freightview.shipment.rate'].search([('active','=',False),('picking_id','=',self.id)])
-        if freightview_shipment_rates:
-            freightview_shipment_rates.write({'active':True})
+        if not self.freightview_shipment_rate_ids:
+            self.create_quote_in_freightview(create_quote_button=False)
         return True
 
     def review_quote_in_freightview(self):
@@ -316,7 +314,7 @@ class Picking(models.Model):
                 'pieces': 1,
                 'hazardous': self.is_hazmat,
                 'hazard': {
-                                'hazmatId': self.hazmat_id,
+                                'hazmatId': self.hazmat_id or '',
                                 'hazardClass': self.hazard_class
                             },
                 'stackable': self.is_stackable,

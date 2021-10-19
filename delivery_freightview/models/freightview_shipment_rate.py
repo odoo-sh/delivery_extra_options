@@ -9,7 +9,6 @@ class FreightviewShipmentRate(models.Model):
     _name = 'freightview.shipment.rate'
     _description = "Freightview Shipment Rate"
 
-    active = fields.Boolean(copy=False)
     rate_id = fields.Char('Rate ID')
     carrier = fields.Char()
     service_type = fields.Char()
