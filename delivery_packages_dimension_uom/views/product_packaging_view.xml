@@ -8,6 +8,15 @@
 	<field name="model">product.packaging</field>
 	<field name="inherit_id" ref="delivery.product_packaging_delivery_form"/>
 	<field name="arch" type="xml">
+			<xpath expr="//group[@name='delivery']/group/div[@name='height']/span/field[@name='length_uom_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='delivery']/group/div[@name='width']/span/field[@name='length_uom_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='delivery']/group/div[@name='packaging_length']/span/field[@name='length_uom_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
 			<field name="height" position="after">
 				<span><field name="package_dimension_uom_name"/></span>
 			</field>
