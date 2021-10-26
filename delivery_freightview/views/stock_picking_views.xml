@@ -61,9 +61,10 @@
 					<field name="is_freightview_shipment_rate_selected" invisible="1"/>
 					<button name="get_rates_in_freightview" attrs="{'invisible': ['|',('freightview_shipment_rate_ids','!=',[]),('carrier_tracking_ref', '!=', False)]}" string="Get Rates" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
 					<button name="review_quote_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rate_selected', '=', False), ('is_imported_shipment_info_from_freightview', '=', True)]}" string="Review Quote in Freightview" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
+					<button name="reset_and_clear" attrs="{'invisible': [('is_imported_shipment_info_from_freightview', '=', True)]}" string="Reset Rates" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
 					<button name="book_in_freightview" attrs="{'invisible': ['|',('is_freightview_shipment_rate_selected', '=', False), ('is_imported_shipment_info_from_freightview', '=', True)]}" string="Book In Freightview" type="object" class="oe_highlight" style="margin-right:5px;" groups="stock.group_stock_user"/>
-					<field name="freightview_shipment_rate_ids" nolabel="1" editable="bottom" attrs="{'readonly': [('is_imported_shipment_info_from_freightview', '=', True)]}" default_order="total asc">
-						<tree editable="bottom">
+					<field name="freightview_shipment_rate_ids" nolabel="1" editable="bottom" attrs="{'readonly': [('is_imported_shipment_info_from_freightview', '=', True)]}">
+						<tree editable="bottom" default_order="total asc">
 							<field name="sequence" widget="handle"/>
 							<field name="rate_id" invisible="1"/>
 							<field name="carrier" readonly="1"/>

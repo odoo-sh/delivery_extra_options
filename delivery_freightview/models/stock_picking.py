@@ -218,19 +218,41 @@ class Picking(models.Model):
                 }
         return True
 
+    def reset_and_clear(self):
+        if not self.is_imported_shipment_info_from_freightview:
+            self.freightview_shipment_id = False
+            self.is_quote_created_in_freightview = False
+            self.write({
+                'freightview_shipment_rate_ids':[(5,0,0)]
+            })
+
     def book_in_freightview(self):
-        selected_lines = self.freightview_shipment_rate_ids.filtered(lambda x: x.is_selected)
-        if len(selected_lines) != 1:
-            raise UserError(_("Please select only one shipment service"))
-        result = self.carrier_id.freightview_book_shipment(selected_lines, self)
-        if result.get('success',False):
-            dict_response = result.get('data')
-            if dict_response:
-                selected_lines.write({'status':'booked'})
-                self.update_delivery_order(dict_response)
-        else:
-            raise UserError(_(result.get('error_message',False)))
-           
+        self.get_shipment_info_from_freightview()
+        if self.carrier_tracking_ref and self.is_imported_shipment_info_from_freightview:
+            notification = {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Shipment Already Booked.'),
+                'type': 'warning',
+                'sticky': False,
+                'next': {'type': 'ir.actions.act_window_close'},
+                },
+            }
+            return notification
+        if not self.carrier_tracking_ref and not self.is_imported_shipment_info_from_freightview:
+            selected_lines = self.freightview_shipment_rate_ids.filtered(lambda x: x.is_selected)
+            if len(selected_lines) != 1:
+                raise UserError(_("Please select only one shipment service"))
+            result = self.carrier_id.freightview_book_shipment(selected_lines, self)
+            if result.get('success',False):
+                dict_response = result.get('data')
+                if dict_response:
+                    selected_lines.write({'status':'booked'})
+                    self.update_delivery_order(dict_response)
+            else:
+                raise UserError(_(result.get('error_message',False)))
+
     def update_delivery_order(self,shipment,cron=False):
         picking = self
         if cron:
