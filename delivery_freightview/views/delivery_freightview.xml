@@ -18,6 +18,22 @@
                         </group>
                     </group>
                 </page>
+                <page string="Accessorials" name="freightview_accessorials" groups="delivery_freightview.group_freightview_manager" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}">
+                    <group colspan="4">
+                        <group>
+                            <field name="notify_cost" attrs="{'required': [('delivery_type', '=', 'freightview')]}"/>
+                            <field name="appoint_cost" attrs="{'required': [('delivery_type', '=', 'freightview')]}"/>
+                            <field name="blindshipping_cost" attrs="{'required': [('delivery_type', '=', 'freightview')]}"/>
+						    <field name="freightview_overlength_rate_ids" string="Overlength" >
+							    <tree editable="bottom" >
+									<field name="min_value" />
+									<field name="max_value" />
+									<field name="fee" />
+								</tree>
+							</field>
+						</group>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>

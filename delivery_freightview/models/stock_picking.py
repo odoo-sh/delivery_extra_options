@@ -57,6 +57,8 @@ class Picking(models.Model):
     is_residential_address = fields.Boolean("Residential Address")
     freightview_shipment_rate_ids = fields.One2many('freightview.shipment.rate','picking_id')
     is_freightview_shipment_rate_selected = fields.Boolean(compute='_compute_is_rate_selected')
+    is_notify = fields.Boolean('Notify')
+    is_appoint = fields.Boolean('Appoint')
 
     def _compute_is_rate_selected(self):
         is_selected = any([x.is_selected for x in self.freightview_shipment_rate_ids])
@@ -155,6 +157,15 @@ class Picking(models.Model):
                             hazardous = 0
                             fuel = 0
                             linehaul = 0
+                            over_dimension = 0
+                            overlength_fee = 0
+                            notify = 0
+                            appoint = 0
+                            blindshipping = 0
+                            total = 0
+                            diff_amount = 0
+                            carrier = self.env['delivery.carrier'].search([('name', 'ilike', '%' + rate.get('carrier') + '%')], limit=1)
+                            surcharge_ids = self.group_id.sale_id.rate_surcharge_ids
                             for charge in charges:
                                 if charge['name']=='residential delivery':
                                     residential_delivery=charge['amount']
@@ -164,19 +175,62 @@ class Picking(models.Model):
                                     fuel=charge['amount']
                                 if charge['name']=='linehaul':
                                     linehaul=charge['amount']
+                                if charge['name']=='discount':
+                                    discount=charge['amount']
+                                if charge['name']=='arrival notice':
+                                    notify=charge['amount']
+                                if charge['name']=='arrival schedule':
+                                    appoint=charge['amount']
+                                if charge['name']=='over dimension':
+                                    over_dimension=charge['amount']
+                            if carrier and carrier.notify_cost:
+                                if self.is_notify:
+                                    notify = carrier.notify_cost
+                                else:
+                                    for surcharge in surcharge_ids:
+                                        if surcharge.display_name=='notify':
+                                            notify = carrier.notify_cost
+                            if carrier and carrier.appoint_cost:
+                                if self.is_appoint:
+                                    appoint = carrier.appoint_cost
+                                else:
+                                    for surcharge in surcharge_ids:
+                                        if surcharge.display_name=='appoint':
+                                            appoint = carrier.appoint_cost
+                            if over_dimension:
+                                length_list = self.package_ids.mapped('packaging_length')
+                                for length in length_list:
+                                    freightview_overlength_rate = carrier.freightview_overlength_rate_ids.filtered(lambda x: length >= x.min_value and length <= x.max_value)
+                                    if freightview_overlength_rate:
+                                        overlength_fee += freightview_overlength_rate.fee
+                                    else:
+                                        freightview_overlength_rate = carrier.freightview_overlength_rate_ids.sorted(key = 'max_value', reverse = True)
+                                        if freightview_overlength_rate[0]:
+                                            if length > freightview_overlength_rate[0].max_value:
+                                                overlength_fee += freightview_overlength_rate[0].fee
+                            if carrier and (self.drop_shipping or self.group_id.sale_id.drop_shipping):
+                                blindshipping = carrier.blindshipping_cost
+                            accessorial_charges = (notify + appoint + blindshipping + overlength_fee)
+                            total =  (rate.get('total') - over_dimension) + accessorial_charges
+                            diff_amount =  accessorial_charges
                             freightview_shipment_rate_obj.create({
                                             'rate_id':rate.get('id'),
                                             'carrier':rate.get('carrier'),
                                             'service_type': rate.get('serviceType'),
                                             'estimated_days': rate.get('days'),
                                             'pickup_date': result.get('data').get('pickupDate'),
-                                            'total':rate.get('total'),
+                                            'total': total,
                                             'book_url':rate.get('bookUrl'),
                                             'linehaul_charge': linehaul,
                                             'fuel_charge': fuel,
                                             'residential_delivery_charge': residential_delivery,
                                             'hazardous_charge': hazardous,
-                                            'picking_id': self.id
+                                            'blindshipping_charge': blindshipping,
+                                            'notify_charge': notify,
+                                            'appoint_charge': appoint,
+                                            'over_dimension_charge': overlength_fee,
+                                            'picking_id': self.id,
+                                            'difference_amount': diff_amount
                                             })
                     freightview_shipment_rate = freightview_shipment_rate_obj.search([('picking_id','=',self.id)],order='total asc', limit=1)
                     freightview_shipment_rate.write({'is_selected':True})

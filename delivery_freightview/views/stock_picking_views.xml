@@ -55,6 +55,10 @@
 						<group string="NMFC" attrs="{'invisible': [('has_packages', '=', True)]}">
 							<field name="nmfc_item" />
 						</group>
+						<group string="Accessorial Charges">
+							<field name="is_notify" />
+							<field name="is_appoint" />
+						</group>
 					</group>
 				</page>
 				<page string="Freightview Rate" name="freightview_rate" attrs="{'invisible': ['|', ('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}">
@@ -75,7 +79,12 @@
 							<field name="fuel_charge" readonly="1"/>
 							<field name="residential_delivery_charge" readonly="1"/>
 							<field name="hazardous_charge" readonly="1"/>
+							<field name="blindshipping_charge" readonly="1" optional="hide"/>
+							<field name="notify_charge" readonly="1" optional="hide"/>
+							<field name="appoint_charge" readonly="1" optional="hide"/>
+							<field name="over_dimension_charge" readonly="1" optional="hide"/>
 							<field name="total" readonly="1"/>
+							<field name="difference_amount" readonly="1" optional="hide"/>
 							<field name='status' readonly="1"/>
 							<field name="is_selected" />
 							<field name="book_url" invisible="1"/>

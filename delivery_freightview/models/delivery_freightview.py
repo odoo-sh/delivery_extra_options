@@ -11,6 +11,10 @@ class ProviderFreightView(models.Model):
     delivery_type = fields.Selection(selection_add=[('freightview', "Freightview")],ondelete={'freightview': lambda recs: recs.write({'delivery_type': 'fixed', 'fixed_price': 0})})
     freightview_api_key = fields.Char(string='Freightview Account Api Key')
     freightview_user_api_key = fields.Char(string='Freightview User Api Key')
+    notify_cost = fields.Float('Notify')
+    appoint_cost = fields.Float('Appoint')
+    blindshipping_cost = fields.Float('Blindshipping')
+    freightview_overlength_rate_ids = fields.One2many('freightview.overlength.rate','delivery_id')
 
     def freightview_rate_shipment(self, picking):
         srm = FreightViewRequest(prod_environment=self.prod_environment, request_type = "rating", debug_logger=self.log_xml)
