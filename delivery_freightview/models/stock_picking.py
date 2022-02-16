@@ -205,7 +205,7 @@ class Picking(models.Model):
                                         overlength_fee += freightview_overlength_rate.fee
                                     else:
                                         freightview_overlength_rate = carrier.freightview_overlength_rate_ids.sorted(key = 'max_value', reverse = True)
-                                        if freightview_overlength_rate[0]:
+                                        if freightview_overlength_rate and freightview_overlength_rate[0]:
                                             if length > freightview_overlength_rate[0].max_value:
                                                 overlength_fee += freightview_overlength_rate[0].fee
                             if carrier and (self.drop_shipping or self.group_id.sale_id.drop_shipping):
