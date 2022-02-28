@@ -80,12 +80,14 @@ class FreightViewRequest():
         res = [field for field in recipient_required_field if not recipient[field]]
         if res:
             return _("The recipient address is missing or wrong!!! \n Missing field(s) :  %s", ", ".join(res).replace("_id", ""))
-        product_name = []
-        for move_line in picking.move_line_ids_without_package:
-            if move_line and move_line.product_id and not move_line.product_id.weight:
-                product_name.append(move_line.product_id.name)
-        if product_name:
-            return _("The product weight is missing or wrong!!! \n For the products(s) :  %s", ", ".join(product_name))     
+        package_name = []
+        if picking.has_packages:
+            packages = picking.get_packages()
+            for package in packages:
+                if not package.shipping_weight:
+                    package_name.append(package.name)
+        if package_name:
+            return _("The Shipping weight is missing or wrong!!! \n For the package(s) :  %s", ", ".join(package_name))
         if not carrier.sudo().freightview_api_key:
             return _("Freightview Account Api Key is missing!!!")
         if not carrier.sudo().freightview_user_api_key:
