@@ -165,7 +165,7 @@ class Picking(models.Model):
                             total = 0
                             diff_amount = 0
                             carrier = self.env['delivery.carrier'].search([('name', 'ilike', '%' + rate.get('carrier') + '%')], limit=1)
-                            connector_freight_quote_module = self.env['ir.module.module'].search([('name', '=', 'connector_freight_quote')])
+                            connector_freight_quote_module = self.env['ir.module.module'].sudo().search([('name', '=', 'connector_freight_quote')])
                             if connector_freight_quote_module.state == 'installed':
                                 surcharge_ids = self.group_id.sale_id.rate_surcharge_ids
                             for charge in charges:
