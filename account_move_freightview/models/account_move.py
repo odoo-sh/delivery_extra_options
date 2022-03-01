@@ -3,7 +3,7 @@
 # License OPL-1 (See LICENSE file for full copyright and licensing details).
 
 from odoo import models, fields, api
-from requests.auth import HTTPBasicAuth 
+from requests.auth import HTTPBasicAuth
 import requests
 import json
 import logging
@@ -18,7 +18,7 @@ class AccountMove(models.Model):
     picking_id = fields.Many2one('stock.picking',copy=False)
     freightview_shipment_link = fields.Char('Freightview Shipment Link')
     checked_in_freightview = fields.Boolean(string='Checked in Freightview')
-    
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         result = super(AccountMove, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
@@ -46,7 +46,12 @@ class AccountMove(models.Model):
                 url = 'https://www.freightview.dev/api/v1.0/shipments'
                 shipment_url = F"https://www.freightview.dev/app#shipments/"
             try:
-                req = requests.get(f"{url}?pro={self.ref}", auth = HTTPBasicAuth(carrier.sudo().freightview_api_key, ''))
+                pro = self.ref
+                pickings = self.env['stock.picking'].search([('carrier_tracking_ref','ilike',self.ref+'%')])
+                if pickings:
+                    pro = pickings[0].carrier_tracking_ref or pro
+
+                req = requests.get(f"{url}?pro={pro}", auth = HTTPBasicAuth(carrier.sudo().freightview_api_key, ''))
                 req.raise_for_status()
                 shipment = json.loads(req.content.decode('utf-8'))
                 _logger.info(shipment)
@@ -84,4 +89,3 @@ class AccountMove(models.Model):
                         self.action_post()
             except Exception as e:
                 _logger.info(e)
-                
