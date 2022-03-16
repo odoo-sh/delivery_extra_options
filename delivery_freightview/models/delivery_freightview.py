@@ -4,6 +4,7 @@
 
 from .freightview_request import FreightViewRequest
 from odoo import models,fields,_
+from odoo.exceptions import UserError
 
 class ProviderFreightView(models.Model):
     _inherit = 'delivery.carrier'
@@ -16,17 +17,19 @@ class ProviderFreightView(models.Model):
     blindshipping_cost = fields.Float('Blindshipping')
     freightview_overlength_rate_ids = fields.One2many('freightview.overlength.rate','delivery_id')
 
-    def freightview_rate_shipment(self, picking):
+    def freightview_rate_shipment(self, model):
+        if model._name == 'sale.order':
+            raise UserError("Freightview Rate is not supported in Sale Order")
         srm = FreightViewRequest(prod_environment=self.prod_environment, request_type = "rating", debug_logger=self.log_xml)
-        warehouse = picking.picking_type_id.warehouse_id
-        check_result = srm.check_required_value(self, warehouse, picking)        
+        warehouse = model.picking_type_id.warehouse_id
+        check_result = srm.check_required_value(self, warehouse, model)
         if check_result:
             return {'success': False,
                     'price': 0.0,
                     'error_message': check_result,
                     'warning_message': False}
 
-        quote_response = srm.freightview_rate_request(self, picking, warehouse)
+        quote_response = srm.freightview_rate_request(self, model, warehouse)
 
         if quote_response.get('error',False):
             return {
