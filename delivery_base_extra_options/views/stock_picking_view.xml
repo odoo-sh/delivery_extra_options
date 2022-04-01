@@ -27,10 +27,10 @@
          <field name="inherit_id" ref="stock.view_picking_form"/>
          <field name="arch" type="xml">
             <xpath expr="//notebook/page[@name='detailed_operations_hidden']/button[@name='action_put_in_pack']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('draft', 'cancel')), ('carrier_tracking_ref', '=', True)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('draft', 'cancel')),  '&amp;' ,('state','=','done'), ('is_locked', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//notebook/page[@name='detailed_operations_shown']/button[@name='action_put_in_pack']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('draft', 'cancel')), ('carrier_tracking_ref', '=', True)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('draft', 'cancel')),  '&amp;' ,('state','=','done'), ('is_locked', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//notebook/page[@name='detailed_operations_shown']/button[@name='action_put_in_pack']" position="after">
                 <field name="is_all_product_in_package" invisible="1"/>
