@@ -8,6 +8,9 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
         <field name="arch" type="xml">
+            <field name="carrier_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', '=', 'cancel')]}</attribute>
+            </field>
             <field name="carrier_id" position="after">
                 <field name="ltl_class" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
                 <field name="carrier_price"/>
@@ -23,6 +26,12 @@
          <field name="model">stock.picking</field>
          <field name="inherit_id" ref="stock.view_picking_form"/>
          <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='detailed_operations_hidden']/button[@name='action_put_in_pack']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('draft', 'cancel')), ('carrier_tracking_ref', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='detailed_operations_shown']/button[@name='action_put_in_pack']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('draft', 'cancel')), ('carrier_tracking_ref', '=', True)]}</attribute>
+            </xpath>
             <xpath expr="//notebook/page[@name='detailed_operations_shown']/button[@name='action_put_in_pack']" position="after">
                 <field name="is_all_product_in_package" invisible="1"/>
                 <button class="oe_highlight" style="margin-left:20px" name="action_add_a_package" type="object" string="Add a package" attrs="{'invisible': ['|',('is_all_product_in_package','=',False),('picking_type_code','!=','outgoing')]}" groups="stock.group_tracking_lot"/>
