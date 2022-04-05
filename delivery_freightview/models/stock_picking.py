@@ -10,9 +10,9 @@ from odoo.exceptions import ValidationError
 
 class Picking(models.Model):
     _inherit = 'stock.picking'
-    
+
     is_quote_created_in_freightview = fields.Boolean('Is Quote Created In Freightview', copy=False)
-    freightview_shipment_id = fields.Char('Freightview Shipment ID',copy=False)   
+    freightview_shipment_id = fields.Char('Freightview Shipment ID',copy=False)
     is_imported_shipment_info_from_freightview = fields.Boolean('Is Imported Data From Freightview', copy=False)
     is_call_or_notify_before_delivery = fields.Boolean('Call/Notify Before Delivery', copy=False)
     is_delivery_appointment_required = fields.Boolean('Delivery Appointment Required', copy=False)
@@ -28,23 +28,23 @@ class Picking(models.Model):
                             ('1.1E', '1.1E'), ('1.1F', '1.1F'),
                             ('1.1G', '1.1G'), ('1.1J', '1.1J'),
                             ('1.1L', '1.1L'),
-                            ('1.2B', '1.2B'), ('1.2C', '1.2C'), 
-                            ('1.2D', '1.2D'), ('1.2E', '1.2E'), 
-                            ('1.2F', '1.2F'), ('1.2G', '1.2G'), 
+                            ('1.2B', '1.2B'), ('1.2C', '1.2C'),
+                            ('1.2D', '1.2D'), ('1.2E', '1.2E'),
+                            ('1.2F', '1.2F'), ('1.2G', '1.2G'),
                             ('1.2H', '1.2H'), ('1.2J', '1.2J'),
                             ('1.2K', '1.2K'), ('1.2L', '1.2L'),
-                            ('1.3C', '1.3C'), ('1.3F', '1.3F'), 
-                            ('1.3G', '1.3G'), ('1.3H', '1.3H'), 
-                            ('1.3J', '1.3J'), ('1.3K', '1.3K'), 
+                            ('1.3C', '1.3C'), ('1.3F', '1.3F'),
+                            ('1.3G', '1.3G'), ('1.3H', '1.3H'),
+                            ('1.3J', '1.3J'), ('1.3K', '1.3K'),
                             ('1.3L', '1.3L'),
-                            ('1.4B', '1.4B'), ('1.4C', '1.4C'), 
-                            ('1.4D', '1.4D'), ('1.4E', '1.4E'), 
-                            ('1.4F', '1.4F'), ('1.4G', '1.4G'), 
-                            ('1.4S', '1.4S'), ('1.5D', '1.5D'), 
+                            ('1.4B', '1.4B'), ('1.4C', '1.4C'),
+                            ('1.4D', '1.4D'), ('1.4E', '1.4E'),
+                            ('1.4F', '1.4F'), ('1.4G', '1.4G'),
+                            ('1.4S', '1.4S'), ('1.5D', '1.5D'),
                             ('1.6N', '1.6N'),
-                            ('2.1', '2.1'), ('2.2', '2.2'), 
-                            ('2.3', '2.3'), 
-                            ('3', '3'), ('4.1', '4.1'), 
+                            ('2.1', '2.1'), ('2.2', '2.2'),
+                            ('2.3', '2.3'),
+                            ('3', '3'), ('4.1', '4.1'),
                             ('4.2', '4.2'), ('4.3', '4.3'),
                             ('5.1', '5.1'), ('5.2', '5.2'),
                             ('6.1', '6.1'), ('6.2', '6.2'),
@@ -77,16 +77,21 @@ class Picking(models.Model):
         self.ensure_one()
         if self.carrier_id and self.carrier_id.delivery_type != 'freightview':
             super(Picking,self).send_to_shipper()
-            
+
     def button_validate(self):
-        carrier = self.carrier_id
-        if not self.carrier_tracking_ref and carrier and carrier.delivery_type == 'freightview' and self.picking_type_code == 'outgoing':
-            result = carrier.freightview_get_all_shipment_info(self)
-            if result.get('success',False):
-                for shipment in result.get('data').get('shipments'):
-                    self.update_delivery_order(shipment)
-#                     self.log_package_details_internal_note(shipment)
-        return super(Picking,self).button_validate()
+        for picking in self:
+            carrier = picking.carrier_id
+            if (
+                not picking.carrier_tracking_ref and carrier
+                and carrier.delivery_type == 'freightview'
+                and picking.picking_type_code == 'outgoing'
+            ):
+                result = carrier.freightview_get_all_shipment_info(picking)
+                if result.get('success', False):
+                    for shipment in result.get('data').get('shipments'):
+                        picking.update_delivery_order(shipment)
+        #                     picking.log_package_details_internal_note(shipment)
+        return super(Picking, self).button_validate()
 
     @api.depends('move_ids_without_package')
     def _compute_is_hazmat(self):
@@ -104,8 +109,8 @@ class Picking(models.Model):
                     picking.show_validate = False
                 if picking.is_imported_shipment_info_from_freightview and picking.state == 'assigned':
                     picking.show_validate = True
-    
-    def view_quote_in_freightview(self): 
+
+    def view_quote_in_freightview(self):
         carrier = self.carrier_id
         if carrier and carrier.delivery_type == 'freightview' and self.picking_type_code == 'outgoing':
             if not carrier.prod_environment:
@@ -116,10 +121,10 @@ class Picking(models.Model):
                 'type': 'ir.actions.act_url',
                 'url':  redirect_url ,
                 'target': 'new'
-                }   
-        return True   
-    
-    def view_shipment_in_freightview(self): 
+                }
+        return True
+
+    def view_shipment_in_freightview(self):
         carrier = self.carrier_id
         if carrier and carrier.delivery_type == 'freightview' and self.picking_type_code == 'outgoing':
             if not carrier.prod_environment:
@@ -130,9 +135,9 @@ class Picking(models.Model):
                 'type': 'ir.actions.act_url',
                 'url':  redirect_url ,
                 'target': 'new'
-                } 
+                }
         return True
-    
+
     def create_quote_in_freightview(self,create_quote_button=True):
         carrier = self.carrier_id
         if carrier and carrier.delivery_type == 'freightview' and self.picking_type_code == 'outgoing':
@@ -239,7 +244,7 @@ class Picking(models.Model):
             else:
                 raise UserError(_(result.get('error_message',False)))
         return True
-        
+
     def get_shipment_info_from_freightview(self):
         carrier = self.carrier_id
         if carrier and carrier.delivery_type == 'freightview' and self.picking_type_code == 'outgoing':
@@ -321,7 +326,7 @@ class Picking(models.Model):
             picking.carrier_price = shipment.get('rate').get('total')
             picking.is_imported_shipment_info_from_freightview = True
             picking.freightview_shipment_id = shipment.get('id')
-    
+
     def log_package_details_internal_note(self,shipment):
         if shipment.get('items'):
             message = ''
@@ -337,14 +342,14 @@ class Picking(models.Model):
                               Height       : %s <br/>
                               Package Type : %s <br/>
                               Peices       : %s <br/>
-                              NMFC         : %s <br/><br/>'''% (package_count, item.get('description'), item.get('freightClass'), 
+                              NMFC         : %s <br/><br/>'''% (package_count, item.get('description'), item.get('freightClass'),
                                                            item.get('weight'), item.get('length'), item.get('width'),
                                                            item.get('height'),item.get('package'),item.get('pieces'),item.get('nmfc'))
-        if message:        
+        if message:
             self.message_post(body=message,
                               message_type='comment',
                               subtype_xmlid='mail.mt_note')
-        
+
     def cron_import_shipment_info_from_freightview(self):
         carrier = self.env.ref('delivery_freightview.delivery_carrier_freightview')
         result = carrier.freightview_get_all_shipment_info(is_cron=True)
@@ -354,7 +359,7 @@ class Picking(models.Model):
         else:
             raise UserError(_(result.get('error_message',False)))
         return True
-    
+
     def cron_import_package_info_from_freightview(self):
         pickings = self.search([('state', '=', 'done'),('carrier_tracking_ref','!=',False),('carrier_id.delivery_type' , '=', 'freightview'),('picking_type_id.code','=','outgoing')])
         for picking in pickings:
@@ -362,13 +367,13 @@ class Picking(models.Model):
             if result.get('success',False):
                 for shipment in result.get('data').get('shipments'):
                     picking.log_package_details_internal_note(shipment)
-                    
+
     def get_packages(self):
         quant_package = self.env['stock.quant.package']
         package_ids = self.move_line_ids.mapped('result_package_id').ids
         package_ids += quant_package.search([('picking_id','=',self.id)]).ids
         return quant_package.search([('id','in',package_ids)])
-    
+
     def get_product_templates(self):
         items = []
         move_line_ids = self.move_line_ids
