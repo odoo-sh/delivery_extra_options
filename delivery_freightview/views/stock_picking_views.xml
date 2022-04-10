@@ -20,15 +20,17 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='button_validate']" position="before">
-            	<field name="is_quote_created_in_freightview" invisible="1"/>
+            <xpath expr="//field[@name='use_create_lots']" position="after">
+                <field name="is_quote_created_in_freightview" invisible="1"/>
             	<field name="freightview_shipment_id" invisible="1"/>
             	<field name="is_imported_shipment_info_from_freightview" invisible="1"/>
             	<field name="carrier_tracking_ref" invisible="1"/>
-                <button name="create_quote_in_freightview" attrs="{'invisible': ['|', '|', '|',('state', '!=', 'assigned'), ('delivery_type', '!=', 'freightview'), ('is_quote_created_in_freightview', '=', True), ('picking_type_code', '!=', 'outgoing')]}" string="Create Quote In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>  
-                <button name="view_quote_in_freightview" attrs="{'invisible': ['|', '|', '|','|',('state', '!=', 'assigned'), ('delivery_type', '!=', 'freightview'), ('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('picking_type_code', '!=', 'outgoing')]}" string="View Quote In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>  
-                <button name="view_shipment_in_freightview" attrs="{'invisible': ['|', '|', '|','|',('state', 'not in', ('assigned', 'done')), ('delivery_type', '!=', 'freightview'), ('is_quote_created_in_freightview', '=', False),('picking_type_code', '!=', 'outgoing'),('carrier_tracking_ref','=', False)]}" string="View Shipment In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>     
-                <button name="get_shipment_info_from_freightview" attrs="{'invisible': ['|','|', '|',('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}" string="Get Shipment Info From Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>     
+            </xpath>
+            <xpath expr="//button[@name='button_validate']" position="before">
+                <button name="create_quote_in_freightview" attrs="{'invisible': ['|', '|', '|',('state', '!=', 'assigned'), ('delivery_type', '!=', 'freightview'), ('is_quote_created_in_freightview', '=', True), ('picking_type_code', '!=', 'outgoing')]}" string="Create Quote In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+                <button name="view_quote_in_freightview" attrs="{'invisible': ['|', '|', '|','|',('state', '!=', 'assigned'), ('delivery_type', '!=', 'freightview'), ('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('picking_type_code', '!=', 'outgoing')]}" string="View Quote In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+                <button name="view_shipment_in_freightview" attrs="{'invisible': ['|', '|', '|','|',('state', 'not in', ('assigned', 'done')), ('delivery_type', '!=', 'freightview'), ('is_quote_created_in_freightview', '=', False),('picking_type_code', '!=', 'outgoing'),('carrier_tracking_ref','=', False)]}" string="View Shipment In Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+                <button name="get_shipment_info_from_freightview" attrs="{'invisible': ['|','|', '|',('is_imported_shipment_info_from_freightview', '=', True), ('is_quote_created_in_freightview', '=', False),('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}" string="Get Shipment Info From Freightview" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
             </xpath>
             <xpath expr="//page[last()]" position="after">
 				<page string="Freightview Options" name="freightview" attrs="{'invisible': ['|',('delivery_type', '!=', 'freightview'), ('picking_type_code', '!=', 'outgoing')]}">
