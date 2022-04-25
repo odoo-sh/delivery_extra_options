@@ -55,6 +55,15 @@ class AccountMove(models.Model):
                 req.raise_for_status()
                 shipment = json.loads(req.content.decode('utf-8'))
                 _logger.info(shipment)
+
+                # attempt to use narration (bill of lading number?) if pro number does not find a match
+                if not shipment['shipments'] or not shipment['shipments'][0]:
+                    alt_ref = self.narration
+                    alt_pro = alt_ref.split(" - ")
+                    req = requests.get(f"{url}?pro={alt_pro[0]}", auth = HTTPBasicAuth(carrier.sudo().freightview_api_key, ''))
+                    req.raise_for_status()
+                    shipment = json.loads(req.content.decode('utf-8'))
+                    
                 vals = {}
                 picking = False
                 no_record_in_freightview = True
