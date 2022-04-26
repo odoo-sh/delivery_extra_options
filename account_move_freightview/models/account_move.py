@@ -57,7 +57,7 @@ class AccountMove(models.Model):
                 _logger.info(shipment)
 
                 # attempt to use narration (bill of lading number?) if pro number does not find a match
-                if not shipment['shipments'] or not shipment['shipments'][0]:
+                if (not shipment['shipments'] or not shipment['shipments'][0]) and self.narration:
                     alt_ref = self.narration
                     alt_pro = alt_ref.split(" - ")
                     req = requests.get(f"{url}?pro={alt_pro[0]}", auth = HTTPBasicAuth(carrier.sudo().freightview_api_key, ''))
