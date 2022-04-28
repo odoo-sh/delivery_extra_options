@@ -7,11 +7,13 @@
         <field name="model">choose.delivery.package</field>
         <field name="inherit_id" ref="delivery.choose_delivery_package_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form/group" position="inside">
-                <field name="ltl_class"/>
-                <field name="is_hazmat"/>
-                <field name="is_add_a_package_action" invisible="1"/>
-                <field name="quantity" attrs="{'invisible': [('is_add_a_package_action','=',False)]}"/>
+            <xpath expr="//form/group" position="after">
+                <group name="base_extra_options">
+                    <field name="ltl_class"/>
+                    <field name="is_hazmat"/>
+                    <field name="is_add_a_package_action" invisible="1"/>
+                    <field name="quantity" attrs="{'invisible': [('is_add_a_package_action','=',False)]}"/>
+                </group>
             </xpath>
             <xpath expr="//div[@name='package_weight']" position="after">
                     <field name="is_custom_dimensions" invisible="1"/>
@@ -25,7 +27,7 @@
                         <field name="width"/>
                         <field name="package_dimension_uom_name"/>
                     </div>
-                    <label for="packaging_length"   attrs="{'invisible':[('is_custom_dimensions','=',False)]}"/> 
+                    <label for="packaging_length"   attrs="{'invisible':[('is_custom_dimensions','=',False)]}"/>
                     <div class="o_row" name="packaging_length" attrs="{'invisible': [('is_custom_dimensions', '=', False)]}">
                         <field name="packaging_length" />
                         <field name="package_dimension_uom_name"/>
