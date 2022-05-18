@@ -20,4 +20,5 @@
         'data/ir_cron_data.xml',
         'views/account_move_view.xml',
     ],
+    'images': ['images/main_screenshot.png'],
 }

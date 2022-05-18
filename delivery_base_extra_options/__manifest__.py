@@ -23,4 +23,5 @@
         "views/stock_picking_view.xml",
         "views/stock_quant_package_view.xml",
     ],
+    'images': ['images/main_screenshot.png'],
 }

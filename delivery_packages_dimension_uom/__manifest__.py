@@ -20,4 +20,5 @@
         'views/res_config_settings_views.xml',
         'views/product_packaging_view.xml',
     ],
+    'images': ['images/main_screenshot.png'],
 }

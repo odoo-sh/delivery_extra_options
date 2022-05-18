@@ -23,6 +23,7 @@
         'views/stock_quant_view.xml',
         'wizard/choose_delivery_package_views.xml',
     ],
+    'images': ['images/main_screenshot.png'],
     'license': 'OPL-1',
     'installable': True,
     'price': '99.99',
