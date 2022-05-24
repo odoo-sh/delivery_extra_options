@@ -21,4 +21,6 @@
         'views/account_move_view.xml',
     ],
     'images': ['images/main_screenshot.png'],
+    'price': '39.99',
+    'currency': 'USD',
 }
