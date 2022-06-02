@@ -14,7 +14,6 @@
     "depends": [
         'stock',
         'delivery',
-        'delivery_packages_dimension_uom'
     ],
     "data": [
         "wizard/choose_delivery_package_view.xml",
