@@ -21,6 +21,7 @@
         'views/delivery_freightview.xml',
         'views/stock_picking_views.xml',
         'views/stock_quant_view.xml',
+        'views/res_config_settings.xml',
         'wizard/choose_delivery_package_views.xml',
     ],
     'images': ['images/main_screenshot.png'],

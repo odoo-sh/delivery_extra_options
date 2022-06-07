@@ -220,7 +220,7 @@ class FreightViewRequest():
             'destContactName': picking.partner_id.name if picking.partner_id.name else '',
             'destContactPhone': picking.partner_id.phone if picking.partner_id.phone else '',
             'destContactEmail': picking.partner_id.email if picking.partner_id.email else '',
-#             'destInstructions': 'Test Pack',
+            'destInstructions': picking.other_delivery_instruction,
             'destDockHoursOpen': '7:00 AM',
             'destDockHoursClose': '7:00 PM',
             'emergencyName' : picking.partner_id.name if picking.partner_id.name else '',

@@ -10,4 +10,5 @@ from . import stock_move_line
 from . import stock_quant
 from . import freightview_shipment_rate
 from . import freightview_overlength_rate
+from . import res_config_settings
 

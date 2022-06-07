@@ -14,7 +14,16 @@
             </xpath>
         </field>
     </record>
-
+	<record id="view_stock_picking_inherit_form" model="ir.ui.view">
+		<field name="name">view_stock_picking_inherit_form</field>
+		<field name="model">stock.picking</field>
+		<field name="inherit_id" ref="delivery_base_extra_options.view_picking_withcarrier_out_base_extra_options_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='carrier_price']" position="after">
+				<field name="actual_carrier_name"/>
+			</xpath>
+		</field>
+		</record>
     <record id="view_picking_form" model="ir.ui.view">
         <field name="name">stock.picking.form.inherit</field>
         <field name="model">stock.picking</field>
@@ -39,6 +48,7 @@
 							<field name="is_residential_address"/>
 							<field name="is_liftgate_required_for_delivery" attrs="{'invisible': [('is_residential_address', '!=', True)]}" />
 							<field name="is_inside_delivery_required"  attrs="{'invisible': [('is_residential_address', '!=', True)]}"/>
+							<field name="other_delivery_instruction"/>
 						</group>
 						<group string="Charges">
 							<field name="is_call_or_notify_before_delivery" attrs="{'readonly': [('is_delivery_appointment_required', '=', True)]}"/>

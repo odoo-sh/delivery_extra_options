@@ -1,0 +1,23 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2022 Sodexis
+    License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+
+    <odoo>
+        <record id="res_config_settings_for_inventory" model="ir.ui.view">
+             <field name="name">res.config.settings.for.inventory</field>
+             <field name="model">res.config.settings</field>
+             <field name="inherit_id" ref="stock.res_config_settings_view_form" />
+             <field name="arch" type="xml">
+                 <xpath expr="//div[@id='signature_delivery_orders']" position="after">  
+                    <div class="col-12 col-lg-6 o_setting_box" id="standardized_offers_setting">  
+                        <div class="o_setting_right_pane">
+                            <div class="row mt16">
+                            <label for="other_delivery_instruction" string="Other Delivery Instruction" class="col-lg-4 o_light_label"/>
+                            <field name="other_delivery_instruction" help="This other delivery instruction will be stored on delivery order" class="oe_inline"/>
+                            </div>
+                        </div>
+                    </div> 
+                 </xpath>
+             </field>
+         </record>
+    </odoo>

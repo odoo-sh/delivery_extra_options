@@ -59,6 +59,20 @@ class Picking(models.Model):
     is_freightview_shipment_rate_selected = fields.Boolean(compute='_compute_is_rate_selected')
     is_notify = fields.Boolean('Notify')
     is_appoint = fields.Boolean('Appoint')
+    other_delivery_instruction = fields.Char(string="Other Delivery Instruction")
+    actual_carrier_name = fields.Char(string="Actual Carrier Name",readonly = True,store = True)
+
+    def create(self, vals):
+        picking_type_id = vals.get('picking_type_id',False)
+        if picking_type_id:
+            picking_type_code = self.env['stock.picking.type'].browse(picking_type_id).code
+            if picking_type_code == 'outgoing':
+                irc_sudo = self.env['ir.config_parameter'].sudo()
+                other_delivery_instruction = irc_sudo.get_param('delivery_freightview.other_delivery_instruction')
+                if other_delivery_instruction:
+                    vals.update({'other_delivery_instruction': other_delivery_instruction})
+        res = super(Picking, self).create(vals)
+        return res
 
     def _compute_is_rate_selected(self):
         is_selected = any([x.is_selected for x in self.freightview_shipment_rate_ids])
@@ -265,6 +279,10 @@ class Picking(models.Model):
     def get_rates_in_freightview(self):
         if not self.freightview_shipment_rate_ids:
             self.create_quote_in_freightview(create_quote_button=False)
+            if self.freightview_shipment_rate_ids:
+                for carrier in self.freightview_shipment_rate_ids:
+                    if carrier.is_selected == True:
+                        self.actual_carrier_name = carrier.carrier
         return True
 
     def review_quote_in_freightview(self):
@@ -286,6 +304,7 @@ class Picking(models.Model):
             self.write({
                 'freightview_shipment_rate_ids':[(5,0,0)]
             })
+            self.actual_carrier_name = False
 
     def book_in_freightview(self):
         self.get_shipment_info_from_freightview()
@@ -326,6 +345,7 @@ class Picking(models.Model):
             picking.carrier_price = shipment.get('rate').get('total')
             picking.is_imported_shipment_info_from_freightview = True
             picking.freightview_shipment_id = shipment.get('id')
+            picking.actual_carrier_name = shipment.get('dispatch').get('carrier')
 
     def log_package_details_internal_note(self,shipment):
         if shipment.get('items'):
