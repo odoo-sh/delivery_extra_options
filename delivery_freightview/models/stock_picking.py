@@ -283,6 +283,7 @@ class Picking(models.Model):
                 for carrier in self.freightview_shipment_rate_ids:
                     if carrier.is_selected == True:
                         self.actual_carrier_name = carrier.carrier
+                        break
         return True
 
     def review_quote_in_freightview(self):
