@@ -61,7 +61,7 @@ class Picking(models.Model):
     is_appoint = fields.Boolean('Appoint')
     other_delivery_instruction = fields.Char(string="Other Delivery Instruction")
     actual_carrier_name = fields.Char(string="Actual Carrier Name",readonly = True,store = True)
-
+    @api.model
     def create(self, vals):
         picking_type_id = vals.get('picking_type_id',False)
         if picking_type_id:

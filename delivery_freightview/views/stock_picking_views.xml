@@ -20,7 +20,7 @@
 		<field name="inherit_id" ref="delivery_base_extra_options.view_picking_withcarrier_out_base_extra_options_form"/>
 		<field name="arch" type="xml">
 			<xpath expr="//field[@name='carrier_price']" position="after">
-				<field name="actual_carrier_name"/>
+				<field name="actual_carrier_name" attrs="{'invisible': [('actual_carrier_name','=',False)]}"/>
 			</xpath>
 		</field>
 		</record>

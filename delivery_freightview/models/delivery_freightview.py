@@ -16,6 +16,7 @@ class ProviderFreightView(models.Model):
     appoint_cost = fields.Float('Appoint')
     blindshipping_cost = fields.Float('Blindshipping')
     freightview_overlength_rate_ids = fields.One2many('freightview.overlength.rate','delivery_id')
+    tracking_url = fields.Char(string="Tracking URL")
 
     def freightview_rate_shipment(self, model):
         if model._name == 'sale.order':
@@ -98,4 +99,7 @@ class ProviderFreightView(models.Model):
                 'data' : book_shipment_response,
                 'error_message': False,
                 }
-    
+    def freightview_get_tracking_link(self, picking):
+        if self.tracking_url:
+            return self.tracking_url + picking.carrier_tracking_ref
+        return
