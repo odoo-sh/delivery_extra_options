@@ -164,7 +164,7 @@ class FreightViewRequest():
                     'hazardous': package.is_hazmat,
                     'hazard': {
                                 'hazmatId': package.hazmat_id or '',
-                                'hazardClass': package.hazard_class
+                                'hazardClass': package.hazard_class if package.is_hazmat else '',
                             }
                 }
 

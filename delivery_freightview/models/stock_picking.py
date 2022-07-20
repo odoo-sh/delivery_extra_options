@@ -419,7 +419,7 @@ class Picking(models.Model):
                 'hazardous': self.is_hazmat,
                 'hazard': {
                                 'hazmatId': self.hazmat_id or '',
-                                'hazardClass': self.hazard_class
+                                'hazardClass': self.hazard_class if self.is_hazmat else '',
                             },
                 'stackable': self.is_stackable,
                 'nmfc': self.nmfc_item or '',
