@@ -11,7 +11,7 @@
          <field name="arch" type="xml">
             <xpath expr="//field[@name='location_id']" position="after">
             	<field name="delivery_type" invisible='1'/>
-            	<field name="hazmat_id" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}"/>
+                <field name="hazmat_id" attrs="{'invisible': ['|',('delivery_type', '!=', 'freightview'),('is_hazmat', '=', False)]}"/>
                 <field name="hazard_class" attrs="{'invisible': ['|',('delivery_type', '!=', 'freightview'),('is_hazmat', '=', False)]}"/>
                 <field name="is_stackable" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}"/>
                 <field name="nmfc_item" attrs="{'invisible': [('delivery_type', '!=', 'freightview')]}"/>
