@@ -11,10 +11,10 @@
     'website': "http://sodexis.com/",
     'author': "Sodexis",
     'license': 'OPL-1',
-    'installable': False,
+    'installable': True,
     'application': False,
     'depends': [
-        'delivery',
+        'stock',
     ],
     'data': [
         'views/res_config_settings_views.xml',

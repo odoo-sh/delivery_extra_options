@@ -5,7 +5,7 @@
 from odoo import models, fields
 
 class ProductPackaging(models.Model):
-    _inherit = 'product.packaging'
+    _inherit = 'stock.package.type'
     
     def _get_default_dimension_uom(self):
         package_dimension_uom_param = self.env['ir.config_parameter'].sudo().get_param('delivery_packages_dimension_uom.package_dimension_uom_id')

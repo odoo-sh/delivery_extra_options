@@ -3,29 +3,17 @@
      License OPL-1 (See LICENSE file for full copyright and licensing details). -->
 <odoo>
 
-<record model="ir.ui.view"	id="product_packaging_delivery_form_inherit">
-	<field name="name">product.packaging.form.delivery.inherit</field>
-	<field name="model">product.packaging</field>
-	<field name="inherit_id" ref="delivery.product_packaging_delivery_form"/>
+<record model="ir.ui.view" id="stock_package_type_form">
+	<field name="name">stock.package.type.form.inherit</field>
+	<field name="model">stock.package.type</field>
+	<field name="inherit_id" ref="stock.stock_package_type_form"/>
 	<field name="arch" type="xml">
-			<xpath expr="//group[@name='delivery']/group/div[@name='height']/span/field[@name='length_uom_name']" position="attributes">
+			<xpath expr="//group[@name='delivery']/group/div[@name='size']/span/field[@name='length_uom_name']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//group[@name='delivery']/group/div[@name='width']/span/field[@name='length_uom_name']" position="attributes">
-                <attribute name="invisible">1</attribute>
+			<xpath expr="//group[@name='delivery']/group/div[@name='size']/span[last()]" position="after">
+				<span><field name="package_dimension_uom_name"/></span>
             </xpath>
-            <xpath expr="//group[@name='delivery']/group/div[@name='packaging_length']/span/field[@name='length_uom_name']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-			<field name="height" position="after">
-				<span><field name="package_dimension_uom_name"/></span>
-			</field>
-			<field name="width" position="after">
-				<span><field name="package_dimension_uom_name"/></span>
-			</field>
-			<field name="packaging_length" position="after">
-				<span><field name="package_dimension_uom_name"/></span>
-			</field>
 	</field>
 </record>
 </odoo>
