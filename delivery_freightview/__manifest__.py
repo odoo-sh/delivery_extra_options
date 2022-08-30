@@ -7,7 +7,7 @@
     'category': 'Operations/Inventory/Delivery',
     'author': "Sodexis",
     'website': "http://sodexis.com/",
-    'version': '14.0.1.0.0',
+    'version': '15.0.1.0.0',
     'application': True,
     'depends': [
         'delivery', 
@@ -26,7 +26,7 @@
     ],
     'images': ['images/main_screenshot.png'],
     'license': 'OPL-1',
-    'installable': True,
+    'installable': False,
     'price': '99.99',
     'currency': 'USD',
 }

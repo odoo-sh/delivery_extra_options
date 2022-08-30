@@ -4,12 +4,12 @@
 {
     "name": "Delivery Base Extra Options",
     "summary": """This module offers the basic delivery options available across all carrier(s).""",
-    "version": "14.0.1.0.0",
+    "version": "15.0.1.0.0",
     "category": "Inventory/Delivery",
     "website": "http://sodexis.com/",
     "author": "Sodexis",
     "license": "OPL-1",
-    "installable": True,
+    "installable": False,
     "application": False,
     "depends": [
         'stock',

@@ -1,4 +1,4 @@
-# Copyright 2021 Sodexis
+# Copyright 2021-2022 Sodexis
 # License OPL-1 (See LICENSE file for full copyright and licensing details).
 
 {
@@ -6,12 +6,12 @@
     'summary': """
         This module allows to display the package dimension uom on packages,
         delivery packages and also in choose delivery package wizard.""",
-    'version': "14.0.1.0.0",
+    'version': "15.0.1.0.0",
     'category': 'Delivery Packages',
     'website': "http://sodexis.com/",
     'author': "Sodexis",
     'license': 'OPL-1',
-    'installable': True,
+    'installable': False,
     'application': False,
     'depends': [
         'delivery',

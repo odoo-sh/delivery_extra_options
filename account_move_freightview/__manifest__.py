@@ -5,12 +5,12 @@
 {
     'name': "Vendor Bill Posting Based On Freightview Cost",
     'summary': """This module is used to import the estimated cost from freightview and post the vendor bill if estimated cost is greater than vendor bill amount""",
-    'version': '14.0.1.0.0',
+    'version': '15.0.1.0.0',
     'category': 'Uncategorized',
     'website': "http://sodexis.com/",
     'author': "Sodexis",
     'license': 'OPL-1',
-    'installable': True,
+    'installable': False,
     'application': False,
     'depends': [
         'account',
