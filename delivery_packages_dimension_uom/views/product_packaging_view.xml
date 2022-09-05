@@ -7,12 +7,18 @@
 	<field name="name">stock.package.type.form.inherit</field>
 	<field name="model">stock.package.type</field>
 	<field name="inherit_id" ref="stock.stock_package_type_form"/>
+	<field name="priority">20</field>
 	<field name="arch" type="xml">
-			<xpath expr="//group[@name='delivery']/group/div[@name='size']/span/field[@name='length_uom_name']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-			<xpath expr="//group[@name='delivery']/group/div[@name='size']/span[last()]" position="after">
-				<span><field name="package_dimension_uom_name"/></span>
+			<xpath expr="//group[@name='delivery']/group/div[@name='size']" position="replace">
+				<div class="o_row" name="size">
+					<field name="packaging_length" placeholder="Length"/>
+					<span>&#215;</span>
+					<field name="width" placeholder="Width"/>
+					<span>&#215;</span>
+					<field name="height" placeholder="Height"/>
+					<span><field name="length_uom_name" help="Size: Length &#215; Width &#215; Height" attrs="{'invisible': True}"/></span>
+					<span><field name="package_dimension_uom_name"/></span>
+				</div>
             </xpath>
 	</field>
 </record>
