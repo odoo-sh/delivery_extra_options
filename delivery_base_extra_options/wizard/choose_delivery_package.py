@@ -1,4 +1,4 @@
-# copyright 2021 Sodexis
+# copyright 2021-2022 Sodexis
 # license OPL-1 (see license file for full copyright and licensing details).
 
 from odoo import models, fields, api
@@ -58,21 +58,21 @@ class ChooseDeliveryPackage(models.TransientModel):
                                   help="Density class of product for LTL")
     is_hazmat = fields.Boolean("Hazmat")
     delivery_type = fields.Selection(related='picking_id.delivery_type', readonly=True)
-    is_custom_dimensions = fields.Boolean(string='Custom Dimensions' ,related='delivery_packaging_id.is_custom_dimensions')
+    is_custom_dimensions = fields.Boolean(string='Custom Dimensions' ,related='delivery_package_type_id.is_custom_dimensions')
     height = fields.Integer(string='Height')
     width = fields.Integer(string='Width')
     packaging_length = fields.Integer(string='Length')
     length_uom_name = fields.Char(string='Length unit of measure label', compute='_compute_length_uom_name', default=_get_default_length_uom)
-    package_dimension_uom_name = fields.Char(related='delivery_packaging_id.package_dimension_uom_name')
+    package_dimension_uom_name = fields.Char(related='delivery_package_type_id.package_dimension_uom_name')
     quantity = fields.Integer("Quantity",default="1")
     is_add_a_package_action = fields.Boolean()
 
-    @api.onchange('delivery_packaging_id')
-    def onchange_delivery_packaging_id(self):
-        if self.delivery_packaging_id:
-            self.height = self.delivery_packaging_id.height
-            self.width  = self.delivery_packaging_id.width
-            self.packaging_length  = self.delivery_packaging_id.packaging_length
+    @api.onchange('delivery_package_type_id')
+    def onchange_delivery_package_type_id(self):
+        if self.delivery_package_type_id:
+            self.height = self.delivery_package_type_id.height
+            self.width  = self.delivery_package_type_id.width
+            self.packaging_length  = self.delivery_package_type_id.packaging_length
 
     def _compute_length_uom_name(self):
         for packaging in self:
@@ -88,8 +88,8 @@ class ChooseDeliveryPackage(models.TransientModel):
     def get_package_value(self):
         values = {}
         values.update({'picking_id':self.picking_id.id})
-        if self.delivery_packaging_id:
-            values.update({'packaging_id':self.delivery_packaging_id.id})
+        if self.delivery_package_type_id:
+            values.update({'package_type_id':self.delivery_package_type_id.id})
         if self.ltl_class:
             values.update({'ltl_class':self.ltl_class})
         if self._context.get('is_hazmat'):

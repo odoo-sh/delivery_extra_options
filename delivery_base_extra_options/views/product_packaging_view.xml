@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2021 Sodexis
+<!-- Copyright 2021-2022 Sodexis
      License OPL-1 (See LICENSE file for full copyright and licensing details). -->
 <odoo>
 
-<record model="ir.ui.view" id="product_packaging_delivery_form_inherit">
-    <field name="name">product.packaging.form.delivery.inherit</field>
-    <field name="model">product.packaging</field>
-    <field name="inherit_id" ref="delivery.product_packaging_delivery_form"/>
+<record model="ir.ui.view" id="stock_package_type_form">
+    <field name="name">stock.package.type.form.inherit</field>
+    <field name="model">stock.package.type</field>
+    <field name="inherit_id" ref="stock.stock_package_type_form"/>
     <field name="arch" type="xml">
         <group name="delivery" position="before">
             <group>
-                <field name="is_custom_dimensions" />
+                <field name="is_custom_dimensions"/>
             </group>
         </group>
     </field>

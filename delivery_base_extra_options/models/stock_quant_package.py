@@ -1,4 +1,4 @@
-# copyright 2021 Sodexis
+# copyright 2021-2022 Sodexis
 # license OPL-1 (see license file for full copyright and licensing details).
 
 from odoo import models,fields,_
@@ -18,12 +18,12 @@ class StockQuantPackage(models.Model):
                                   help="Density class of product for LTL")
     is_hazmat = fields.Boolean("Hazmat")
     delivery_type = fields.Selection(related='picking_id.delivery_type', readonly=True)
-    is_custom_dimensions = fields.Boolean(string='Custom Dimensions' ,related='packaging_id.is_custom_dimensions')
+    is_custom_dimensions = fields.Boolean(string='Custom Dimensions' ,related='package_type_id.is_custom_dimensions')
     height = fields.Integer('Height')
     width = fields.Integer('Width')
     packaging_length = fields.Integer('Length')
     length_uom_name = fields.Char(string='Length unit of measure label', compute='_compute_length_uom_name', default=_get_default_length_uom)
-    package_dimension_uom_name = fields.Char(related='packaging_id.package_dimension_uom_name')
+    package_dimension_uom_name = fields.Char(related='package_type_id.package_dimension_uom_name')
 
     def _compute_length_uom_name(self):
         for packaging in self:
