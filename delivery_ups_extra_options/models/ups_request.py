@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 Sodexis
+# Copyright 2021-2022 Sodexis
 # License OPL-1 (See LICENSE file for full copyright and licensing details).
 from odoo.addons.delivery_ups.models.ups_request import UPSRequest
 from zeep.exceptions import Fault

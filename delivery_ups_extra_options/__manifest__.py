@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 Sodexis
+# Copyright 2021-2022 Sodexis
 # License OPL-1 (See LICENSE file for full copyright and licensing details).
 
 {
@@ -15,7 +15,8 @@
         'sale',
         'delivery_ups',
         'delivery_base_extra_options',
-        'sale_ship_term'
+        'sale_ship_term',
+        'stock',
     ],
     'data': [
         'wizard/choose_delivery_package_view.xml',
@@ -23,7 +24,7 @@
         'views/res_partner_view.xml',
         'views/delivery_carrier_view.xml',
         'views/sale_view.xml',
-        'views/product_package_view.xml',
+        'views/stock_package_type.xml',
         'views/stock_picking_view.xml',
         'views/stock_quant_package_view.xml',
     ],

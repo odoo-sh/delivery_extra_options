@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 Sodexis
+# Copyright 2021-2022 Sodexis
 # License OPL-1 (See LICENSE file for full copyright and licensing details).
 from odoo import api, fields, models
 
@@ -14,7 +14,6 @@ class ProviderUPS(models.Model):
             values.append(('03F', 'UPS Ground with Freight Pricing'))
 
         return values
-
     ups_default_service_type = fields.Selection(_get_ups_service_types)
     ups_package_weight_unit = fields.Selection(selection_add=[('OZS', 'Ounces')])
 
