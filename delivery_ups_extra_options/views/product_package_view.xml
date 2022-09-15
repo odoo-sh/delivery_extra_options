@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Sodexis
+     License OPL-1 (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+    <record model="ir.ui.view" id="product_packaging_delivery_form_inherit">
+        <field name="name">product.packaging.form.delivery</field>
+        <field name="model">product.packaging</field>
+        <field name="inherit_id" ref="delivery.product_packaging_delivery_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='shipper_package_code']" position="after">
+                <field name="active" invisible="1"/>
+            </xpath>
+            <xpath expr="//label[@for='name']" position="before">
+                <widget name="web_ribbon" text="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}" />
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_packaging_delivery_search_inherit">
+        <field name="name">product.packaging.search.delivery</field>
+        <field name="model">product.packaging</field>
+        <field name="arch" type="xml">
+            <search string="Product Packaging">
+                <field name="name" filter_domain="[('name','ilike',self)]" string="Package Type"/>
+                <field name="package_carrier_type" filter_domain="[('package_carrier_type','ilike',self)]" string="Carrier"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+</odoo>

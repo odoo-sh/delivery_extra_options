@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="view_quant_package_ups_extra_option_form" model="ir.ui.view">
+    <field name="name">stock.quant.package.ups.extra.option.form</field>
+    <field name="model">stock.quant.package</field>
+    <field name="inherit_id" ref="delivery_base_extra_options.view_quant_package_weight_base_extra_option_form"/>
+    <field name="arch" type="xml">
+         <field name="is_hazmat" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="is_hazmat" position="before">
+                <field name="ups_default_service_type" invisible="1"/>
+                <field name="is_hazmat" attrs="{'invisible':[('ups_default_service_type','in',('92','93'))]}"/>
+            </field>
+        <field name="is_hazmat" position="after">
+            <field name="currency_id" invisible="1"/>
+            <field name="delivery_type" invisible="1"/>
+            <field name="ups_declared_value" widget="monetary" options="{'currency_field': 'currency_id'}" attrs="{'invisible':['|',('ups_default_service_type','in',('92','93')),('delivery_type','!=','ups')]}"/>
+            <field name="is_additional_handling" attrs="{'invisible':[('delivery_type','!=','ups')]}"/>
+            <field name="is_dry_ice" attrs="{'invisible':[('delivery_type','!=','ups')]}"/>
+        </field>
+    </field>
+</record>
+</odoo>
