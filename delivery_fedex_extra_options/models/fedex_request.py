@@ -59,6 +59,25 @@ class FedexRequestExtra(FedexRequest):
                 package_height = custom_package.height
                 package_width = custom_package.width
                 package_length = custom_package.packaging_length
+                if self.picking.fedex_signature_option_type:
+                    package.SpecialServicesRequested = self.factory.PackageSpecialServicesRequested()
+                    package.SpecialServicesRequested.SignatureOptionDetail = self.factory.SignatureOptionDetail()
+                    package.SpecialServicesRequested.SignatureOptionDetail.OptionType = self.picking.fedex_signature_option_type.upper()
+                if custom_package.is_hazmat:
+                    package.SpecialServicesRequested = self.factory.PackageSpecialServicesRequested()
+                    package.SpecialServicesRequested.SpecialServiceTypes = ['DANGEROUS_GOODS']
+                    package.SpecialServicesRequested.DangerousGoodsDetail = self.factory.DangerousGoodsDetail()
+                    package.SpecialServicesRequested.DangerousGoodsDetail.EmergencyContactNumber = self.picking.partner_id.phone
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Offeror = self.picking.partner_id.name
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Containers = self.factory.DangerousGoodsContainer()
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Containers.NumberOfContainers = 1
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Containers.HazardousCommodities = self.factory.HazardousCommodityContent()
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Containers.HazardousCommodities.Description = self.factory.HazardousCommodityDescription()
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Containers.HazardousCommodities.Description.Id = 'UN1990'
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Packaging = self.factory.HazardousCommodityPackagingDetail()
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Packaging.Count = 1
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Packaging.Units = 'LBS'
+                    package.SpecialServicesRequested.DangerousGoodsDetail.Options = 'HAZARDOUS_MATERIALS'
             package.Dimensions = self.factory.Dimensions()
             package.Dimensions.Height = package_height
             package.Dimensions.Width = package_width

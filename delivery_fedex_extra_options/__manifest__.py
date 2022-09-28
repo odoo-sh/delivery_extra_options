@@ -16,5 +16,8 @@
         'delivery_base_extra_options',
     ],
     'data': [
+        'views/stock_picking_view.xml',
+        'views/stock_quant_package_view.xml',
+        'wizard/choose_delivery_package_view.xml',
     ],
 }

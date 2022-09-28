@@ -1,0 +1,18 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<!-- Copyright 2022 Sodexis
+     License OPL-1  (See LICENSE file for full copyright and licensing details). -->
+<odoo>
+    <record id="view_quant_package_fedex_extra_option_form" model="ir.ui.view">
+        <field name="name">stock.quant.package.fedex.extra.option.form</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="delivery_base_extra_options.view_quant_package_weight_base_extra_option_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ltl_class']" position="after">
+                <field name="delivery_type" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='ltl_class']" position="attributes">
+                <attribute name="attrs">{'invisible': [('delivery_type', '=', 'fedex')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
