@@ -54,7 +54,7 @@ class FedexRequestExtra(FedexRequest):
 
         package.PhysicalPackaging = 'BOX'
         if package_code == 'YOUR_PACKAGING':
-            if self.picking.package_ids and self.picking.package_ids[sequence_number - 1] and self.picking.package_ids[sequence_number - 1].is_custom_dimensions:
+            if self.picking and self.picking.package_ids and self.picking.package_ids[sequence_number - 1] and self.picking.package_ids[sequence_number - 1].is_custom_dimensions:
                 custom_package = self.picking.package_ids[sequence_number - 1]
                 package_height = custom_package.height
                 package_width = custom_package.width
