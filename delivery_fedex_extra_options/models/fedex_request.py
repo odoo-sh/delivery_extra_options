@@ -15,7 +15,7 @@ super_shipping_charges_payment = FedexRequest.shipping_charges_payment
 
 def __init__(self, debug_logger, request_type="shipping", prod_environment=False, ):
     self.picking = False
-    return super_init(self, debug_logger, request_type="shipping", prod_environment=False, )
+    return super_init(self, debug_logger, request_type, prod_environment, )
         
 def transaction_detail(self, transaction_id):
     if transaction_id and isinstance(transaction_id,int):
