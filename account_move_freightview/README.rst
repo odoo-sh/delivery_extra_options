@@ -1,4 +1,3 @@
-
 ===============================
 Freightview Vendor Bill Posting
 ===============================
@@ -10,4 +9,4 @@ and post the vendor bill if estimated cost is greater than vendor bill amount
 Contributors
 ------------
 
-* Sodexis
+* Sodexis, Inc <apps@sodexis.com>
