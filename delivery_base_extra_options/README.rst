@@ -22,4 +22,4 @@ To use this module, you need to:
 Contributors
 ------------
 
-* Sodexis, Inc <apps@sodexis.com>
+* Sodexis <apps@sodexis.com>
