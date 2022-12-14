@@ -22,4 +22,4 @@ and save it.
 Contributors
 ------------
 
-* Sodexis, Inc <apps@sodexis.com>
+* Sodexis <apps@sodexis.com>
