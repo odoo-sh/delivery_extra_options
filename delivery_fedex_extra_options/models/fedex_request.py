@@ -12,11 +12,10 @@ super_init = FedexRequest.__init__
 super_transaction_detail = FedexRequest.transaction_detail
 super_shipping_charges_payment = FedexRequest.shipping_charges_payment
 
-
 def __init__(self, debug_logger, request_type="shipping", prod_environment=False, ):
     self.picking = False
     return super_init(self, debug_logger, request_type, prod_environment, )
-        
+
 def transaction_detail(self, transaction_id):
     if transaction_id and isinstance(transaction_id,int):
         self.picking = request.env['stock.picking'].browse(transaction_id)
@@ -40,6 +39,7 @@ def shipping_charges_payment(self, shipping_charges_payment_account):
             Payor.ResponsibleParty.AccountNumber = self.picking.carrier_account
             self.RequestedShipment.ShippingChargesPayment.Payor = Payor
 
+
 FedexRequest.__init__ = __init__
 FedexRequest.transaction_detail = transaction_detail
 FedexRequest.shipping_charges_payment = shipping_charges_payment
@@ -52,9 +52,7 @@ class FedexRequestExtra(FedexRequest):
         package_weight.Value = weight_value
         package_weight.Units = self.RequestedShipment.TotalWeight.Units
 
-        package.PhysicalPackaging = 'BOX'
-        if package_code == 'YOUR_PACKAGING':
-            if self.picking and self.picking.package_ids and self.picking.package_ids[sequence_number - 1] and self.picking.package_ids[sequence_number - 1].is_custom_dimensions:
+        if self.picking and self.picking.package_ids and self.picking.package_ids[sequence_number - 1]:
                 custom_package = self.picking.package_ids[sequence_number - 1]
                 package_height = custom_package.height
                 package_width = custom_package.width
@@ -78,6 +76,9 @@ class FedexRequestExtra(FedexRequest):
                     package.SpecialServicesRequested.DangerousGoodsDetail.Packaging.Count = 1
                     package.SpecialServicesRequested.DangerousGoodsDetail.Packaging.Units = 'LBS'
                     package.SpecialServicesRequested.DangerousGoodsDetail.Options = 'HAZARDOUS_MATERIALS'
+
+        package.PhysicalPackaging = 'BOX'
+        if package_code == 'YOUR_PACKAGING':
             package.Dimensions = self.factory.Dimensions()
             package.Dimensions.Height = package_height
             package.Dimensions.Width = package_width
@@ -114,4 +115,5 @@ class FedexRequestExtra(FedexRequest):
             self.RequestedShipment.RequestedPackageLineItems = package
 
 FedexRequest._add_package = FedexRequestExtra._add_package
-#         
+
+
