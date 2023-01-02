@@ -209,7 +209,10 @@ def process_shipment(self):
 
         # Some users are qualified to receive negotiated rates
         negotiated_rate = 'NegotiatedRateCharges' in response.ShipmentResults and response.ShipmentResults.NegotiatedRateCharges and response.ShipmentResults.NegotiatedRateCharges.TotalCharge.MonetaryValue or None
-        vals = {}
+        vals = {
+            'negotiated_price': 0.0,
+            'ups_ground_freight_price': 0.0
+        }
         if negotiated_rate:
             vals.update({'negotiated_price':negotiated_rate})
         netcharge = 'FRSShipmentData' in response.ShipmentResults and response.ShipmentResults.FRSShipmentData and response.ShipmentResults.FRSShipmentData.TransportationCharges and response.ShipmentResults.FRSShipmentData.TransportationCharges.NetCharge.MonetaryValue or None
