@@ -86,7 +86,7 @@ def check_required_value(self, shipper, ship_from, ship_to, order=False, picking
     if picking:
         self.picking = picking
     res = super_check_required_value(self, shipper, ship_from, ship_to, order, picking)
-    if res and picking and picking.has_packages and 'The estimated price cannot be computed because the weight of your product' in res:
+    if res and picking and picking.has_packages and 'weight is missing for' in res:
         res = False
     return res
 
