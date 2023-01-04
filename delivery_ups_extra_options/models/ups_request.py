@@ -3,6 +3,7 @@
 # License OPL-1 (See LICENSE file for full copyright and licensing details).
 from odoo.addons.delivery_ups.models.ups_request import UPSRequest
 from zeep.exceptions import Fault
+from odoo import _
 
 super_init = UPSRequest.__init__
 super_check_required_value = UPSRequest.check_required_value
@@ -83,11 +84,38 @@ def get_error_message(self, error_code, description):
     return result
 
 def check_required_value(self, shipper, ship_from, ship_to, order=False, picking=False):
+    required_field = {'city': 'City', 'country_id': 'Country', 'phone': 'Phone'}
     if picking:
         self.picking = picking
     res = super_check_required_value(self, shipper, ship_from, ship_to, order, picking)
     if res and picking and picking.has_packages and 'weight is missing for' in res:
-        res = False
+        # Check required field for recipient address
+        res = [required_field[field] for field in required_field if field != 'phone' and not ship_to[field]]
+        if ship_to.country_id.code in ('US', 'CA', 'IE') and not ship_to.state_id.code:
+            res.append('State')
+        if not ship_to.street and not ship_to.street2:
+            res.append('Street')
+        if ship_to.country_id.code != 'HK' and not ship_to.zip:
+            res.append('ZIP code')
+        if len(ship_to.street or '') > 35 or len(ship_to.street2 or '') > 35:
+            return _("UPS address lines can only contain a maximum of 35 characters. You can split the contacts addresses on multiple lines to try to avoid this limitation.")
+        if picking and not order:
+            order = picking.sale_id
+        phone = ship_to.mobile or ship_to.phone
+        if order and not phone:
+            phone = order.partner_id.mobile or order.partner_id.phone
+        if picking:
+            for ml in picking.move_line_ids.filtered(lambda ml: not ml.result_package_id and not ml.product_id.weight):
+                return _("The delivery cannot be done because the weight of your product is missing.")
+            packages_without_weight = picking.move_line_ids.mapped('result_package_id').filtered(lambda p: not p.shipping_weight)
+            if packages_without_weight:
+                return _('Packages %s do not have a positive shipping weight.', ', '.join(packages_without_weight.mapped('display_name')))
+        if not phone:
+            res.append('Phone')
+        if res:
+            return _("The recipient address is missing or wrong.\n(Missing field(s) : %s)", ",".join(res))
+        else:
+            res = False
     return res
 
 def set_package_detail(self, client, packages, packaging_type, ship_from, ship_to, cod_info, request_type):
