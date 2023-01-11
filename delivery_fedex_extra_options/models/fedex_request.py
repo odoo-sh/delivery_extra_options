@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 super_init = FedexRequest.__init__
 super_transaction_detail = FedexRequest.transaction_detail
 super_shipping_charges_payment = FedexRequest.shipping_charges_payment
+super_set_recipient = FedexRequest.set_recipient
 
 def __init__(self, debug_logger, request_type="shipping", prod_environment=False, ):
     self.picking = False
@@ -39,10 +40,16 @@ def shipping_charges_payment(self, shipping_charges_payment_account):
             Payor.ResponsibleParty.AccountNumber = self.picking.carrier_account
             self.RequestedShipment.ShippingChargesPayment.Payor = Payor
 
+def set_recipient(self, recipient_partner):
+    super_set_recipient(self, recipient_partner)
+    if not recipient_partner.is_company and not recipient_partner.name:
+        self.RequestedShipment.Recipient.Contact.PersonName = ''
+
 
 FedexRequest.__init__ = __init__
 FedexRequest.transaction_detail = transaction_detail
 FedexRequest.shipping_charges_payment = shipping_charges_payment
+FedexRequest.set_recipient = set_recipient
 
 class FedexRequestExtra(FedexRequest):
 
